@@ -1,0 +1,1482 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
+<title>Kovai Bus — Coimbatore Bus Routes</title>
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#161826">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="apple-touch-icon" href="icon-192.png">
+<style id="kovai-native-shell">
+/* On a real phone the OS draws the status bar and gesture bar, so the design's
+   mock bezel and mock bars collapse to full-bleed. Desktop keeps the frame. */
+@media (display-mode: standalone), (display-mode: fullscreen), (max-width: 820px) {
+  html, body { width: 100%; height: 100%; overflow: hidden; overscroll-behavior: none; }
+  body > div, .sc-host, .sc-host-x { width: 100% !important; height: 100% !important; }
+  .sc-host-x > div {
+    width: 100% !important; height: 100% !important;
+    border-radius: 0 !important; box-shadow: none !important;
+    background: #0d0e17 !important; box-sizing: border-box !important;
+    padding-top: env(safe-area-inset-top) !important;
+    padding-bottom: env(safe-area-inset-bottom) !important;
+  }
+  .sc-host-x > div > div:first-child,
+  .sc-host-x > div > div:last-child { display: none !important; }
+  .sc-host-x > div > div:nth-child(2) { width: 100% !important; height: 100% !important; flex: 1 1 auto !important; }
+  * { -webkit-tap-highlight-color: transparent; }
+  input, textarea { font-size: 16px; }
+}
+</style>
+<script src="./support.js"></script>
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function () {
+    navigator.serviceWorker.register('sw.js').catch(function () {});
+  });
+}
+</script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="styles.css">
+<script src="ds-bundle.js"></script>
+<script src="kovai-data.js"></script>
+<template id="__bundler_thumbnail"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200"><rect width="200" height="200" fill="#161826"/><g stroke="#9184d9" stroke-width="3.4" fill="none" stroke-linecap="round"><path d="M40 132h120"/><rect x="72" y="72" width="56" height="38" rx="8"/><path d="M72 92h56"/><path d="M84 110v8M116 110v8"/></g><circle cx="86" cy="102" r="3.4" fill="#9184d9"/><circle cx="114" cy="102" r="3.4" fill="#9184d9"/></svg></template>
+<style>
+body{margin:0;background:#0d0e17;font-family:var(--font-body)}
+a{color:var(--color-accent-300);text-decoration:none}
+a:hover{color:var(--color-accent)}
+@keyframes kRise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+@keyframes kFade{from{opacity:0}to{opacity:1}}
+@keyframes kSheet{from{transform:translateY(46px);opacity:.4}to{transform:none;opacity:1}}
+@keyframes kSwapDown{0%{transform:none}50%{transform:translateY(21px) scale(.97);opacity:.35}100%{transform:none}}
+@keyframes kSwapUp{0%{transform:none}50%{transform:translateY(-21px) scale(.97);opacity:.35}100%{transform:none}}
+@keyframes kPulse{0%{transform:scale(1);opacity:.65}70%{transform:scale(2.6);opacity:0}100%{opacity:0}}
+@keyframes kDash{to{stroke-dashoffset:-24}}
+@keyframes kBob{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
+@keyframes kGlow{0%,100%{opacity:.35}50%{opacity:.8}}
+@keyframes kSpin{to{transform:rotate(360deg)}}
+@keyframes kTrace{from{stroke-dashoffset:900}to{stroke-dashoffset:0}}
+[data-r]{animation:kRise .42s cubic-bezier(.2,.9,.25,1) both}
+[data-r="0"]{animation-delay:0ms}[data-r="1"]{animation-delay:60ms}[data-r="2"]{animation-delay:120ms}
+[data-r="3"]{animation-delay:180ms}[data-r="4"]{animation-delay:240ms}[data-r="5"]{animation-delay:300ms}
+[data-r="6"]{animation-delay:360ms}[data-r="7"]{animation-delay:420ms}
+[data-anim="down"]{animation:kSwapDown .34s ease both}
+[data-anim="up"]{animation:kSwapUp .34s ease both}
+[data-scroll]{overflow-x:auto;scrollbar-width:none}
+[data-scroll]::-webkit-scrollbar{display:none}
+input.input::placeholder{color:var(--color-neutral-600)}
+</style>
+</helmet>
+<x-import component-from-global-scope="AndroidDevice" from="./android-frame.jsx" dark="1" hint-size="440px,920px">
+<div style="min-height:100%;display:flex;flex-direction:column;background:var(--color-bg);color:var(--color-text);font-size:14px;position:relative">
+
+<!-- ══ AUTH ══ -->
+<sc-if value="{{ scAuth }}" hint-placeholder-val="{{ true }}">
+<div style="flex:1;display:flex;flex-direction:column;padding:0 22px;background:radial-gradient(120% 60% at 50% 0%,#262a60 0%,rgba(38,42,96,0) 62%),var(--color-bg)">
+  <div style="height:64px"></div>
+  <div style="display:flex;align-items:center;gap:10px;color:var(--color-accent)">
+    <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><rect x="3" y="4" width="18" height="12" rx="2.5"></rect><path d="M3 10h18M7 16v2.5M17 16v2.5"></path><circle cx="7.5" cy="13" r="1.1"></circle><circle cx="16.5" cy="13" r="1.1"></circle></svg>
+    <div style="font-family:var(--font-heading);font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--color-neutral-400)">Coimbatore City</div>
+  </div>
+  <div style="height:18px"></div>
+  <div style="font-family:var(--font-heading);font-weight:500;font-size:40px;line-height:1.02;letter-spacing:-.02em">Kovai Bus</div>
+  <div style="font-size:17px;color:var(--color-accent-300);margin-top:6px">கோவை பஸ் வழிகாட்டி</div>
+  <div style="height:14px"></div>
+  <p style="font-size:14px;color:var(--color-neutral-400);max-width:280px;line-height:1.5">Type where you are and where you're going. We find the nearest stop to board, every bus you need to change, and how long the walk is.</p>
+
+  <div style="height:10px"></div>
+  <div style="position:relative;height:110px">
+    <svg width="100%" height="110" viewBox="0 0 360 110" fill="none" style="overflow:visible">
+      <path d="M0 82 H360" stroke="var(--color-neutral-800)" stroke-width="16" stroke-linecap="round"></path>
+      <path d="M0 82 H360" stroke="var(--color-neutral-700)" stroke-width="1.5" stroke-dasharray="14 14" style="animation:kDash 1.1s linear infinite"></path>
+      <g stroke="var(--color-accent)" stroke-width="1.6" fill="var(--color-bg)" style="animation:kBob 2.4s ease-in-out infinite">
+        <animateMotion dur="7s" repeatCount="indefinite" path="M-40 62 H400"></animateMotion>
+        <rect x="0" y="0" width="46" height="26" rx="6"></rect>
+        <path d="M0 15h46" stroke-width="1.1"></path>
+        <circle cx="11" cy="26" r="3.4"></circle><circle cx="35" cy="26" r="3.4"></circle>
+        <path d="M6 6h12M24 6h6" stroke-width="1.1"></path>
+      </g>
+    </svg>
+  </div>
+
+  <div style="flex:1"></div>
+
+  <sc-if value="{{ authStep0 }}" hint-placeholder-val="{{ true }}">
+  <div style="display:flex;flex-direction:column;gap:10px;padding-bottom:26px">
+    <button class="btn btn-primary btn-block" style="height:48px;font-size:15px;gap:10px" onClick="{{ onGoogle }}">
+      <span style="width:20px;height:20px;border-radius:50%;border:1.5px solid var(--color-accent-400);display:inline-flex;align-items:center;justify-content:center;font-size:12px;font-weight:600">G</span>
+      Continue with Google
+    </button>
+    <div style="font-size:11px;color:var(--color-neutral-600);text-align:center">We only read your name — nothing else.</div>
+  </div>
+  </sc-if>
+
+  <sc-if value="{{ authStep1 }}" hint-placeholder-val="{{ false }}">
+  <div style="padding-bottom:26px;animation:kSheet .34s ease both">
+    <div style="font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--color-neutral-500);margin-bottom:8px">Choose an account</div>
+    <sc-for list="{{ accounts }}" as="a" hint-placeholder-count="2">
+      <button style="width:100%;display:flex;align-items:center;gap:12px;padding:11px 12px;margin-bottom:8px;background:var(--color-surface);border:1px solid var(--color-divider);border-radius:var(--radius-md);color:inherit;cursor:pointer;text-align:left;font:inherit" style-hover="{{ hoverSurface }}" onClick="{{ a.pick }}">
+        <span style="width:34px;height:34px;border-radius:50%;background:var(--color-accent-800);color:var(--color-accent-100);display:inline-flex;align-items:center;justify-content:center;font-family:var(--font-heading);font-size:14px">{{ a.initial }}</span>
+        <span style="flex:1;min-width:0">
+          <span style="display:block;font-size:14px">{{ a.name }}</span>
+          <span style="display:block;font-size:12px;color:var(--color-neutral-500)">{{ a.email }}</span>
+        </span>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--color-neutral-600)" stroke-width="1.6" stroke-linecap="round"><path d="M9 5l7 7-7 7"></path></svg>
+      </button>
+    </sc-for>
+  </div>
+  </sc-if>
+
+  <sc-if value="{{ authStep2 }}" hint-placeholder-val="{{ false }}">
+  <div style="padding-bottom:26px;animation:kSheet .34s ease both">
+    <div class="field" style="margin-bottom:12px">
+      <label>What should we call you?</label>
+      <input class="input" style="height:46px;font-size:15px" value="{{ nameDraft }}" onChange="{{ onName }}" placeholder="Your name"></input>
+    </div>
+    <button class="btn btn-primary btn-block" style="height:46px;font-size:15px" onClick="{{ onFinishAuth }}">Start planning</button>
+  </div>
+  </sc-if>
+</div>
+</sc-if>
+
+<!-- ══ HOME ══ -->
+<sc-if value="{{ scHome }}" hint-placeholder-val="{{ false }}">
+<div style="flex:1;display:flex;flex-direction:column">
+  <div style="padding:16px 16px 6px;display:flex;align-items:flex-start;gap:12px">
+    <div style="flex:1;min-width:0">
+      <div style="font-size:12px;color:var(--color-neutral-500)">{{ greeting }}</div>
+      <div style="font-family:var(--font-heading);font-size:25px;line-height:1.1;letter-spacing:-.015em">{{ userName }}</div>
+    </div>
+    <button class="btn btn-icon btn-secondary" style="width:38px;height:38px;border-radius:50%" onClick="{{ goYou }}">
+      <span style="font-family:var(--font-heading);font-size:14px;color:var(--color-accent-300)">{{ initial }}</span>
+    </button>
+  </div>
+
+  <div style="padding:0 16px">
+    <div style="display:flex;align-items:center;gap:7px;font-size:11px;color:var(--color-accent-300);margin-bottom:10px">
+      <span style="position:relative;width:7px;height:7px;display:inline-block">
+        <span style="position:absolute;inset:0;border-radius:50%;background:var(--color-accent)"></span>
+        <span style="position:absolute;inset:0;border-radius:50%;background:var(--color-accent);animation:kPulse 1.8s ease-out infinite"></span>
+      </span>
+      {{ liveLine }}
+    </div>
+  </div>
+
+  <!-- planner card -->
+  <div style="margin:0 16px;background:var(--color-surface);border-radius:var(--radius-lg);box-shadow:var(--shadow-sm);padding:12px 12px 12px 0;display:flex;align-items:stretch;gap:2px">
+    <div style="width:34px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:8px 0">
+      <span style="width:9px;height:9px;border-radius:50%;border:2px solid var(--color-accent)"></span>
+      <span style="flex:1;width:0;border-left:2px dotted var(--color-neutral-700);margin:5px 0"></span>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--color-accent)" stroke-width="1.7" stroke-linecap="round"><path d="M12 21s7-6.6 7-11a7 7 0 1 0-14 0c0 4.4 7 11 7 11z"></path><circle cx="12" cy="10" r="2.2"></circle></svg>
+    </div>
+    <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:6px">
+      <button data-anim="{{ fromAnim }}" onClick="{{ pickFrom }}" style="text-align:left;background:none;border:0;padding:6px 4px;border-radius:var(--radius-sm);cursor:pointer;color:inherit;font:inherit" style-hover="{{ hoverTint }}">
+        <span style="display:block;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--color-neutral-500)">From</span>
+        <span style="display:block;font-size:16px;font-family:var(--font-heading);line-height:1.25;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ fromName }}</span>
+        <span style="display:block;font-size:11px;color:var(--color-accent-300)">{{ fromSub }}</span>
+      </button>
+      <div style="height:1px;background:linear-gradient(to right,transparent,var(--color-divider) 20px,var(--color-divider) calc(100% - 20px),transparent)"></div>
+      <button data-anim="{{ toAnim }}" onClick="{{ pickTo }}" style="text-align:left;background:none;border:0;padding:6px 4px;border-radius:var(--radius-sm);cursor:pointer;color:inherit;font:inherit" style-hover="{{ hoverTint }}">
+        <span style="display:block;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--color-neutral-500)">To</span>
+        <span style="display:block;font-size:16px;font-family:var(--font-heading);line-height:1.25;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ toName }}</span>
+        <span style="display:block;font-size:11px;color:var(--color-accent-300)">{{ toSub }}</span>
+      </button>
+    </div>
+    <div style="display:flex;align-items:center;padding-left:6px">
+      <button class="btn btn-icon btn-secondary" style="border-radius:50%" onClick="{{ onSwap }}" aria-label="Swap">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--color-accent)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M7 5v13M7 18l-3.2-3.2M17 19V6M17 6l3.2 3.2"></path></svg>
+      </button>
+    </div>
+  </div>
+
+  <div style="padding:12px 16px 0">
+    <button class="btn btn-primary btn-block" style="height:46px;font-size:15px;gap:9px" onClick="{{ onFind }}">
+      <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><circle cx="6" cy="6" r="2.4"></circle><circle cx="18" cy="18" r="2.4"></circle><path d="M6 8.6v4.4a4.4 4.4 0 0 0 4.4 4.4H15.4"></path></svg>
+      Find my bus
+    </button>
+  </div>
+
+  <div data-scroll style="display:flex;gap:8px;padding:14px 16px 2px">
+    <sc-for list="{{ savedChips }}" as="c" hint-placeholder-count="3">
+      <button class="tag tag-neutral" style="flex:none;gap:6px;padding:7px 12px;border:0;cursor:pointer;font:inherit;font-size:12px" onClick="{{ c.pick }}">
+        <span style="color:var(--color-accent-300)">{{ c.glyph }}</span> {{ c.label }}
+      </button>
+    </sc-for>
+  </div>
+
+  <div style="padding:16px 16px 4px;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--color-neutral-500)">Recent trips</div>
+  <div style="padding:0 16px;display:flex;flex-direction:column;gap:8px">
+    <sc-for list="{{ recents }}" as="r" hint-placeholder-count="3">
+      <button data-r="{{ r.i }}" onClick="{{ r.pick }}" style="display:flex;align-items:center;gap:11px;padding:10px 12px;background:var(--color-surface);border:0;border-radius:var(--radius-md);cursor:pointer;color:inherit;font:inherit;text-align:left" style-hover="{{ hoverSurface }}">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--color-neutral-500)" stroke-width="1.6" stroke-linecap="round"><circle cx="12" cy="12" r="8.5"></circle><path d="M12 7.5V12l3 2"></path></svg>
+        <span style="flex:1;min-width:0">
+          <span style="display:block;font-size:13.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ r.label }}</span>
+          <span style="display:block;font-size:11px;color:var(--color-neutral-500)">{{ r.sub }}</span>
+        </span>
+        <span class="tag tag-accent" style="font-size:10.5px">{{ r.bus }}</span>
+      </button>
+    </sc-for>
+  </div>
+
+  <div style="padding:18px 16px 4px;display:flex;align-items:baseline;gap:8px">
+    <span style="font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--color-neutral-500)">Stops near you</span>
+    <a href="#" onClick="{{ goNearby }}" style="font-size:11.5px;margin-left:auto">See all</a>
+  </div>
+  <div data-scroll style="display:flex;gap:10px;padding:0 16px 18px">
+    <sc-for list="{{ nearbyMini }}" as="n" hint-placeholder-count="3">
+      <div data-r="{{ n.i }}" style="flex:none;width:158px;padding:11px;background:var(--color-surface);border-radius:var(--radius-md);box-shadow:var(--shadow-sm)">
+        <div style="display:flex;align-items:center;gap:6px;font-size:12.5px;font-family:var(--font-heading);line-height:1.25">{{ n.name }}</div>
+        <div style="font-size:11px;color:var(--color-neutral-500);margin-top:2px">{{ n.walk }}</div>
+        <div style="display:flex;align-items:center;gap:6px;margin-top:9px">
+          <span class="tag tag-outline" style="font-size:10.5px;padding:2px 7px">{{ n.bus }}</span>
+          <span style="font-size:11.5px;color:var(--color-accent-300)">{{ n.eta }}</span>
+        </div>
+      </div>
+    </sc-for>
+  </div>
+  <div style="flex:1"></div>
+</div>
+</sc-if>
+
+<!-- ══ PICKER ══ -->
+<sc-if value="{{ scPicker }}" hint-placeholder-val="{{ false }}">
+<div style="flex:1;display:flex;flex-direction:column">
+  <div style="padding:14px 14px 10px;display:flex;align-items:center;gap:8px">
+    <button class="btn btn-icon btn-secondary" onClick="{{ goBack }}" aria-label="Back">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M15 5l-7 7 7 7"></path></svg>
+    </button>
+    <div style="flex:1;position:relative">
+      <input class="input" style="height:42px;padding-left:34px;font-size:14.5px" placeholder="{{ pickerPlaceholder }}" value="{{ query }}" onChange="{{ onQuery }}"></input>
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="var(--color-neutral-500)" stroke-width="1.7" stroke-linecap="round" style="position:absolute;left:10px;top:12px"><circle cx="11" cy="11" r="6.5"></circle><path d="M16 16l4.5 4.5"></path></svg>
+    </div>
+  </div>
+  <button onClick="{{ useLocation }}" style="display:flex;align-items:center;gap:11px;margin:0 14px 10px;padding:11px 12px;background:var(--color-accent-900);border:1px solid var(--color-accent-800);border-radius:var(--radius-md);color:inherit;font:inherit;cursor:pointer;text-align:left" style-hover="{{ hoverTint }}">
+    <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="var(--color-accent)" stroke-width="1.6" stroke-linecap="round"><circle cx="12" cy="12" r="8"></circle><circle cx="12" cy="12" r="2.6"></circle><path d="M12 1.5v3M12 19.5v3M1.5 12h3M19.5 12h3"></path></svg>
+    <span style="flex:1">
+      <span style="display:block;font-size:13.5px">Use my current location</span>
+      <span style="display:block;font-size:11px;color:var(--color-neutral-500)">{{ locationHint }}</span>
+    </span>
+  </button>
+  <div style="padding:2px 16px 6px;font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--color-neutral-500)">{{ pickerGroupLabel }}</div>
+  <div style="flex:1;overflow:auto;padding:0 14px 20px;display:flex;flex-direction:column">
+    <sc-for list="{{ pickerResults }}" as="p" hint-placeholder-count="6">
+      <button onClick="{{ p.pick }}" style="display:flex;align-items:center;gap:12px;padding:11px 6px;background:none;border:0;border-bottom:1px solid var(--color-divider);color:inherit;font:inherit;cursor:pointer;text-align:left" style-hover="{{ hoverTint }}">
+        <span style="width:30px;height:30px;flex:none;border-radius:var(--radius-sm);background:{{ p.iconBg }};display:inline-flex;align-items:center;justify-content:center;color:{{ p.iconFg }}">{{ p.icon }}</span>
+        <span style="flex:1;min-width:0">
+          <span style="display:block;font-size:13.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ p.name }}</span>
+          <span style="display:block;font-size:11px;color:var(--color-neutral-500);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ p.sub }}</span>
+        </span>
+      </button>
+    </sc-for>
+    <sc-if value="{{ pickerEmpty }}" hint-placeholder-val="{{ false }}">
+      <div style="padding:30px 8px;color:var(--color-neutral-500);font-size:13px">No place matches that. Try a stop, a college, a hospital or a mall.</div>
+    </sc-if>
+  </div>
+</div>
+</sc-if>
+
+<!-- ══ RESULTS ══ -->
+<sc-if value="{{ scResults }}" hint-placeholder-val="{{ false }}">
+<div style="flex:1;display:flex;flex-direction:column">
+  <div style="padding:14px 14px 10px;display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--color-divider)">
+    <button class="btn btn-icon btn-secondary" onClick="{{ goHome }}" aria-label="Back">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M15 5l-7 7 7 7"></path></svg>
+    </button>
+    <button onClick="{{ goHome }}" style="flex:1;min-width:0;text-align:left;background:none;border:0;color:inherit;font:inherit;cursor:pointer">
+      <span style="display:block;font-size:13.5px;font-family:var(--font-heading);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ fromName }}</span>
+      <span style="display:flex;align-items:center;gap:5px;font-size:13.5px;color:var(--color-accent-300);overflow:hidden">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 4v16M12 20l-5-5M12 20l5-5"></path></svg>
+        <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ toName }}</span>
+      </span>
+    </button>
+  </div>
+
+  <div data-scroll style="display:flex;gap:7px;padding:11px 14px 9px">
+    <sc-for list="{{ sortOptions }}" as="s" hint-placeholder-count="4">
+      <button onClick="{{ s.pick }}" style="{{ s.style }}">{{ s.label }}</button>
+    </sc-for>
+  </div>
+
+  <div style="padding:0 16px 10px;display:flex;align-items:center;gap:7px;font-size:11px;color:var(--color-neutral-500)">
+    <span style="position:relative;width:6px;height:6px;display:inline-block">
+      <span style="position:absolute;inset:0;border-radius:50%;background:var(--color-accent)"></span>
+      <span style="position:absolute;inset:0;border-radius:50%;background:var(--color-accent);animation:kPulse 1.8s ease-out infinite"></span>
+    </span>
+    {{ resultsLive }}
+  </div>
+
+  <div style="flex:1;overflow:auto;padding:0 14px 22px;display:flex;flex-direction:column;gap:10px">
+    <sc-for list="{{ results }}" as="r" hint-placeholder-count="4">
+      <div data-r="{{ r.i }}" style="background:var(--color-surface);border-radius:var(--radius-md);box-shadow:var(--shadow-sm);overflow:hidden">
+        <button onClick="{{ r.onGo }}" style="width:100%;text-align:left;background:none;border:0;padding:12px 12px 8px;color:inherit;font:inherit;cursor:pointer" style-hover="{{ hoverTint }}">
+          <span style="display:flex;align-items:flex-start;gap:10px">
+            <span style="flex:1;min-width:0;display:flex;flex-wrap:wrap;align-items:center;gap:5px">
+              <sc-for list="{{ r.chips }}" as="c" hint-placeholder-count="2">
+                <span style="{{ c.style }}">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><rect x="3" y="4.5" width="18" height="11" rx="2"></rect><path d="M3 10h18M7.5 15.5v2M16.5 15.5v2"></path></svg>
+                  {{ c.no }}
+                  <span style="{{ c.dotStyle }}"></span>
+                </span>
+              </sc-for>
+              <span style="font-size:11px;color:var(--color-neutral-500)">{{ r.changeLabel }}</span>
+            </span>
+            <span style="text-align:right;flex:none">
+              <span style="display:block;font-family:var(--font-heading);font-size:22px;line-height:1;letter-spacing:-.01em">{{ r.timeLabel }}</span>
+              <span style="display:block;font-size:11px;color:var(--color-neutral-500);margin-top:3px">arrive {{ r.arrive }}</span>
+            </span>
+          </span>
+          <span style="display:flex;gap:3px;margin-top:11px">
+            <sc-for list="{{ r.bar }}" as="b" hint-placeholder-count="3">
+              <span style="{{ b.style }}"></span>
+            </sc-for>
+          </span>
+          <span style="display:flex;align-items:center;gap:7px;margin-top:9px;font-size:11.5px;color:var(--color-neutral-400);white-space:nowrap">
+            <span style="{{ r.etaStyle }}">{{ r.etaLabel }}</span>
+            <span style="opacity:.5">·</span>
+            <span>{{ r.walkLabel }}</span>
+            <span style="opacity:.5">·</span>
+            <span>{{ r.fareLabel }}</span>
+          </span>
+          <span style="display:block;margin-top:6px;font-size:11.5px;color:var(--color-accent-300);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ r.boardLabel }}</span>
+        </button>
+        <button onClick="{{ r.onOpen }}" style="width:100%;display:flex;align-items:center;justify-content:center;gap:6px;padding:7px;background:none;border:0;border-top:1px solid var(--color-divider);color:var(--color-accent-300);font:inherit;font-size:11.5px;cursor:pointer;white-space:nowrap" style-hover="{{ hoverTint }}">
+          {{ r.openLabel }}
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="{{ r.chevStyle }}"><path d="M5 9l7 7 7-7"></path></svg>
+        </button>
+        <sc-if value="{{ r.open }}" hint-placeholder-val="{{ false }}">
+          <div style="padding:4px 14px 14px;animation:kFade .28s ease both">
+            <sc-for list="{{ r.steps }}" as="s" hint-placeholder-count="3">
+              <div style="display:flex;gap:11px">
+                <div style="width:22px;flex:none;display:flex;flex-direction:column;align-items:center">
+                  <span style="{{ s.dotStyle }}"></span>
+                  <span style="{{ s.railStyle }}"></span>
+                </div>
+                <div style="flex:1;min-width:0;padding-bottom:12px">
+                  <div style="font-size:13px;line-height:1.35">{{ s.title }}</div>
+                  <div style="font-size:11px;color:var(--color-neutral-500);margin-top:1px">{{ s.sub }}</div>
+                </div>
+              </div>
+            </sc-for>
+          </div>
+        </sc-if>
+      </div>
+    </sc-for>
+    <sc-if value="{{ noResults }}" hint-placeholder-val="{{ false }}">
+      <div style="padding:26px 6px;color:var(--color-neutral-400);font-size:13px;line-height:1.55">No town bus reaches that pair within the walking limit. Try raising <em>Max walk</em> in Tweaks, or pick a nearby landmark.</div>
+    </sc-if>
+  </div>
+</div>
+</sc-if>
+
+<!-- ══ TRIP DETAIL ══ -->
+<sc-if value="{{ scTrip }}" hint-placeholder-val="{{ false }}">
+<div style="flex:1;display:flex;flex-direction:column">
+  <div style="position:relative;height:286px;flex:none;background:#12141f;overflow:hidden">
+    <svg width="412" height="286" viewBox="0 0 412 286" fill="none" style="display:block">
+      <rect width="412" height="286" fill="#12141f"></rect>
+      <sc-for list="{{ tripRoads }}" as="rd" hint-placeholder-count="6">
+        <polyline points="{{ rd.points }}" style="{{ rd.style }}"></polyline>
+      </sc-for>
+      <sc-for list="{{ tripRideLines }}" as="l" hint-placeholder-count="1">
+        <polyline points="{{ l.points }}" fill="none" stroke="var(--color-accent)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="900" style="animation:kTrace 1.4s ease-out both"></polyline>
+      </sc-for>
+      <sc-for list="{{ tripWalkLines }}" as="l" hint-placeholder-count="2">
+        <polyline points="{{ l.points }}" fill="none" stroke="var(--color-accent-300)" stroke-width="2.4" stroke-linecap="round" stroke-dasharray="2 7" style="animation:kDash .9s linear infinite"></polyline>
+      </sc-for>
+      <sc-for list="{{ tripStopDots }}" as="d" hint-placeholder-count="4">
+        <circle cx="{{ d.x }}" cy="{{ d.y }}" r="3.4" fill="#12141f" stroke="var(--color-accent-400)" stroke-width="1.8"></circle>
+      </sc-for>
+      <sc-for list="{{ tripLabels }}" as="t" hint-placeholder-count="3">
+        <g>{{ t.el }}</g>
+      </sc-for>
+      <sc-if value="{{ hasTripPath }}" hint-placeholder-val="{{ false }}">
+      <g>
+        <animateMotion dur="9s" repeatCount="indefinite" path="{{ tripPathD }}" rotate="auto"></animateMotion>
+        <g transform="translate(-9,-6)">
+          <rect x="0" y="0" width="18" height="12" rx="3" fill="var(--color-accent)"></rect>
+          <rect x="2" y="2" width="14" height="4" rx="1.4" fill="#12141f" opacity=".55"></rect>
+        </g>
+      </g>
+      </sc-if>
+      <circle cx="{{ originXY.x }}" cy="{{ originXY.y }}" r="7" fill="none" stroke="var(--color-accent)" stroke-width="1.4" opacity=".5"></circle>
+      <circle cx="{{ originXY.x }}" cy="{{ originXY.y }}" r="4" fill="var(--color-accent-200)"></circle>
+      <g transform="{{ destTransform }}">
+        <path d="M0 0s7-6.6 7-11a7 7 0 1 0-14 0c0 4.4 7 11 7 11z" fill="var(--color-accent)"></path>
+        <circle cx="0" cy="-11" r="2.4" fill="#12141f"></circle>
+      </g>
+    </svg>
+    <button class="btn btn-icon" onClick="{{ goResults }}" style="position:absolute;top:12px;left:12px;background:var(--color-surface);box-shadow:var(--shadow-md);border-radius:50%" aria-label="Back">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M15 5l-7 7 7 7"></path></svg>
+    </button>
+    <div style="position:absolute;top:14px;right:12px;display:flex;align-items:center;gap:6px;padding:5px 10px;border-radius:999px;background:var(--color-surface);box-shadow:var(--shadow-sm);font-size:10.5px;color:var(--color-accent-300);white-space:nowrap">
+      <span style="position:relative;width:6px;height:6px;display:inline-block">
+        <span style="position:absolute;inset:0;border-radius:50%;background:var(--color-accent)"></span>
+        <span style="position:absolute;inset:0;border-radius:50%;background:var(--color-accent);animation:kPulse 1.8s ease-out infinite"></span>
+      </span>
+      {{ tripLiveBadge }}
+    </div>
+  </div>
+
+  <div style="flex:1;margin-top:-18px;border-radius:var(--radius-lg) var(--radius-lg) 0 0;background:var(--color-bg);box-shadow:0 -1px 0 var(--color-neutral-800);animation:kSheet .42s cubic-bezier(.2,.9,.2,1) both;display:flex;flex-direction:column">
+    <div style="display:flex;justify-content:center;padding:8px 0 2px"><span style="width:38px;height:4px;border-radius:2px;background:var(--color-neutral-700)"></span></div>
+    <div style="padding:6px 16px 0;display:flex;align-items:flex-end;gap:12px">
+      <div style="flex:1">
+        <div style="font-family:var(--font-heading);font-size:29px;line-height:1;letter-spacing:-.015em">{{ tripTime }}</div>
+        <div style="font-size:11.5px;color:var(--color-neutral-500);margin-top:4px">{{ tripSub }}</div>
+      </div>
+      <div style="text-align:right">
+        <div style="font-family:var(--font-heading);font-size:19px;line-height:1">{{ tripFare }}</div>
+        <div style="font-size:10.5px;color:var(--color-neutral-500)">{{ tripFareSub }}</div>
+      </div>
+    </div>
+
+    <!-- boarding card -->
+    <div style="margin:14px 16px 0;padding:12px;border-radius:var(--radius-md);background:var(--color-accent-900);border:1px solid var(--color-accent-800);display:flex;align-items:center;gap:12px">
+      <span style="width:34px;height:34px;flex:none;border-radius:50%;background:var(--color-accent-800);display:inline-flex;align-items:center;justify-content:center;color:var(--color-accent-200)">
+        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12.5" cy="4" r="2"></circle><path d="M12.5 6.2v5.6L9 20M12.5 11.8l3.4 3.1L17 20M9.5 9.2l6-1.1"></path></svg>
+      </span>
+      <span style="flex:1;min-width:0">
+        <span style="display:block;font-size:13.5px;line-height:1.35">{{ boardHeadline }}</span>
+        <span style="display:block;font-size:11px;color:var(--color-accent-300);margin-top:2px">{{ boardSub }}</span>
+      </span>
+      <button class="btn btn-ghost" style="font-size:11.5px;flex:none" onClick="{{ goBoarding }}">Change</button>
+    </div>
+
+    <div style="padding:18px 16px 6px;font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--color-neutral-500)">Step by step</div>
+    <div style="padding:0 16px">
+      <sc-for list="{{ tripSteps }}" as="s" hint-placeholder-count="5">
+        <div data-r="{{ s.i }}" style="display:flex;gap:13px">
+          <div style="width:26px;flex:none;display:flex;flex-direction:column;align-items:center">
+            <span style="{{ s.iconWrapStyle }}">{{ s.icon }}</span>
+            <span style="{{ s.railStyle }}"></span>
+          </div>
+          <div style="flex:1;min-width:0;padding-bottom:16px">
+            <div style="font-size:14px;line-height:1.35;font-family:var(--font-heading)">{{ s.title }}</div>
+            <div style="font-size:12px;color:var(--color-neutral-400);margin-top:2px;line-height:1.4">{{ s.sub }}</div>
+            <div style="font-size:11px;color:var(--color-neutral-500);margin-top:3px">{{ s.meta }}</div>
+          </div>
+        </div>
+      </sc-for>
+    </div>
+
+    <div style="display:flex;gap:9px;padding:4px 16px 26px">
+      <button class="btn btn-primary" style="flex:1;height:46px;font-size:15px" onClick="{{ onStart }}">Start journey</button>
+      <button class="btn btn-secondary btn-icon" style="width:46px;height:46px" onClick="{{ onSaveTrip }}" aria-label="Save trip">
+        <svg width="19" height="19" viewBox="0 0 24 24" fill="{{ savedFill }}" stroke="var(--color-accent)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.6l2.7 5.6 6.1.8-4.5 4.3 1.1 6.1L12 17.4 6.6 20.4l1.1-6.1L3.2 10l6.1-.8z"></path></svg>
+      </button>
+    </div>
+  </div>
+</div>
+</sc-if>
+
+<!-- ══ BOARDING COMPARE ══ -->
+<sc-if value="{{ scBoard }}" hint-placeholder-val="{{ false }}">
+<div style="flex:1;display:flex;flex-direction:column">
+  <div style="padding:14px 14px 8px;display:flex;align-items:center;gap:10px">
+    <button class="btn btn-icon btn-secondary" onClick="{{ goTrip }}" aria-label="Back">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M15 5l-7 7 7 7"></path></svg>
+    </button>
+    <div>
+      <div style="font-family:var(--font-heading);font-size:17px;line-height:1.15">Where to board</div>
+      <div style="font-size:11px;color:var(--color-neutral-500)">{{ boardCompareSub }}</div>
+    </div>
+  </div>
+
+  <div style="position:relative;height:172px;margin:6px 14px 0;border-radius:var(--radius-md);overflow:hidden;background:#12141f">
+    <svg width="100%" height="172" viewBox="0 0 384 172" fill="none" style="display:block">
+      <rect width="384" height="172" fill="#12141f"></rect>
+      <sc-for list="{{ boardRoads }}" as="rd" hint-placeholder-count="4">
+        <polyline points="{{ rd.points }}" style="{{ rd.style }}"></polyline>
+      </sc-for>
+      <sc-for list="{{ boardWalks }}" as="w" hint-placeholder-count="3">
+        <line x1="{{ w.x1 }}" y1="{{ w.y1 }}" x2="{{ w.x2 }}" y2="{{ w.y2 }}" stroke="var(--color-accent-300)" stroke-width="2" stroke-dasharray="2 6" stroke-linecap="round" style="animation:kDash .9s linear infinite"></line>
+      </sc-for>
+      <sc-for list="{{ boardPins }}" as="p" hint-placeholder-count="3">
+        <g>
+          <circle cx="{{ p.x }}" cy="{{ p.y }}" r="9" fill="var(--color-accent-800)" stroke="var(--color-accent)" stroke-width="1.4"></circle>
+          {{ p.numEl }}
+          {{ p.labelEl }}
+        </g>
+      </sc-for>
+      <circle cx="{{ boardOriginXY.x }}" cy="{{ boardOriginXY.y }}" r="11" fill="none" stroke="var(--color-accent)" stroke-width="1.2" opacity=".45"></circle>
+      <circle cx="{{ boardOriginXY.x }}" cy="{{ boardOriginXY.y }}" r="4.5" fill="var(--color-accent-200)"></circle>
+    </svg>
+  </div>
+
+  <div style="flex:1;overflow:auto;padding:14px 14px 24px">
+    <div style="border-radius:var(--radius-md);background:var(--color-surface);overflow:hidden;box-shadow:var(--shadow-sm)">
+      <div style="display:flex;padding:10px 10px 8px;gap:8px;border-bottom:1px solid var(--color-divider)">
+        <div style="width:74px;flex:none"></div>
+        <sc-for list="{{ boardCols }}" as="c" hint-placeholder-count="3">
+          <div style="flex:1;min-width:0;text-align:center">
+            <div style="font-size:11px;font-family:var(--font-heading);line-height:1.25;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ c.n }}. {{ c.name }}</div>
+          </div>
+        </sc-for>
+      </div>
+      <sc-for list="{{ boardRows }}" as="row" hint-placeholder-count="5">
+        <div style="display:flex;padding:9px 10px;gap:8px;border-bottom:1px solid var(--color-divider);align-items:center">
+          <div style="width:74px;flex:none;font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--color-neutral-500)">{{ row.label }}</div>
+          <sc-for list="{{ row.cells }}" as="cell" hint-placeholder-count="3">
+            <div style="{{ cell.style }}">{{ cell.text }}</div>
+          </sc-for>
+        </div>
+      </sc-for>
+      <div style="display:flex;padding:10px;gap:8px">
+        <div style="width:74px;flex:none"></div>
+        <sc-for list="{{ boardCols }}" as="c" hint-placeholder-count="3">
+          <div style="flex:1;min-width:0;display:flex;justify-content:center">
+            <button class="btn btn-primary" style="font-size:11px;padding:5px 8px;width:100%" onClick="{{ c.pick }}">Board here</button>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+    <p style="margin-top:14px;font-size:11.5px;color:var(--color-neutral-500);line-height:1.5">Highlighted cells are the best on that measure. The nearest stop isn't always the fastest — a longer walk to a busier corridor often saves a change.</p>
+  </div>
+</div>
+</sc-if>
+
+<!-- ══ IN-JOURNEY ══ -->
+<sc-if value="{{ scJourney }}" hint-placeholder-val="{{ false }}">
+<div style="flex:1;display:flex;flex-direction:column">
+  <div style="flex:none;padding:14px 16px 14px;background:linear-gradient(180deg,#262a60 0%,rgba(38,42,96,0) 100%)">
+    <div style="display:flex;align-items:center;gap:10px">
+      <button class="btn btn-icon btn-secondary" onClick="{{ onEndJourney }}" aria-label="Close">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"></path></svg>
+      </button>
+      <div style="flex:1">
+        <div style="font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--color-accent-300)">{{ jPhase }}</div>
+        <div style="font-family:var(--font-heading);font-size:21px;line-height:1.15">{{ jHeadline }}</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:6px;font-size:10.5px;color:var(--color-accent-200)">
+        <span style="position:relative;width:7px;height:7px;display:inline-block">
+          <span style="position:absolute;inset:0;border-radius:50%;background:var(--color-accent-200)"></span>
+          <span style="position:absolute;inset:0;border-radius:50%;background:var(--color-accent-200);animation:kPulse 1.6s ease-out infinite"></span>
+        </span>
+        Live
+      </div>
+    </div>
+    <div style="display:flex;gap:18px;margin-top:14px;white-space:nowrap">
+      <div>
+        <div style="font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--color-neutral-500)">Arrive</div>
+        <div style="font-size:14.5px;font-family:var(--font-heading)">{{ jArrive }}</div>
+      </div>
+      <div>
+        <div style="font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--color-neutral-500)">Vehicle</div>
+        <div style="font-size:13.5px;font-family:var(--font-heading)">{{ jPlate }}</div>
+      </div>
+      <div>
+        <div style="font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--color-neutral-500)">Crowd</div>
+        <div style="font-size:14.5px;font-family:var(--font-heading)">{{ jOccupancy }}</div>
+      </div>
+    </div>
+  </div>
+
+  <sc-if value="{{ jAlertOn }}" hint-placeholder-val="{{ false }}">
+    <div style="flex:none;margin:0 14px 10px;padding:11px 12px;border-radius:var(--radius-md);border:1px solid var(--color-accent);background:var(--color-accent-900);display:flex;align-items:center;gap:10px;animation:kRise .3s ease both">
+      <span style="width:8px;height:8px;border-radius:50%;background:var(--color-accent);animation:kGlow 1.2s ease-in-out infinite"></span>
+      <span style="flex:1;font-size:13px;color:var(--color-accent-100)">{{ jAlertText }}</span>
+    </div>
+  </sc-if>
+
+  <div style="flex:1;min-height:0;overflow:auto;padding:4px 16px 16px">
+    <sc-for list="{{ jStops }}" as="s" hint-placeholder-count="6">
+      <div style="display:flex;gap:13px">
+        <div style="width:20px;flex:none;display:flex;flex-direction:column;align-items:center">
+          <span style="{{ s.dotStyle }}"></span>
+          <span style="{{ s.railStyle }}"></span>
+        </div>
+        <div style="flex:1;min-width:0;padding-bottom:13px">
+          <div style="{{ s.nameStyle }}">{{ s.name }}</div>
+          <div style="font-size:11px;color:var(--color-neutral-500)">{{ s.sub }}</div>
+        </div>
+        <div style="font-size:11px;color:var(--color-neutral-500);padding-top:2px">{{ s.right }}</div>
+      </div>
+    </sc-for>
+  </div>
+
+  <div style="flex:none;padding:0 14px 22px;display:flex;gap:9px">
+    <button class="btn btn-secondary" style="flex:1;height:44px" onClick="{{ onPrevStop }}">Back a stop</button>
+    <button class="btn btn-primary" style="flex:1.4;height:44px;font-size:14.5px" onClick="{{ onNextStop }}">{{ jNextLabel }}</button>
+  </div>
+</div>
+</sc-if>
+
+<!-- ══ LIVE MAP ══ -->
+<sc-if value="{{ scMap }}" hint-placeholder-val="{{ false }}">
+<div style="flex:1;display:flex;flex-direction:column;position:relative">
+  <div style="position:absolute;inset:0;background:#12141f">
+    <svg width="100%" height="100%" viewBox="0 0 412 700" preserveAspectRatio="xMidYMid slice" fill="none" style="display:block">
+      <rect width="412" height="700" fill="#12141f"></rect>
+      <sc-for list="{{ cityRoads }}" as="rd" hint-placeholder-count="8">
+        <g>
+          <polyline points="{{ rd.points }}" fill="none" stroke="var(--color-neutral-800)" stroke-width="{{ rd.w }}" stroke-linecap="round" stroke-linejoin="round"></polyline>
+          <polyline points="{{ rd.points }}" fill="none" stroke="var(--color-neutral-900)" stroke-width="1" stroke-dasharray="8 10"></polyline>
+        </g>
+      </sc-for>
+      <sc-for list="{{ cityStops }}" as="s" hint-placeholder-count="20">
+        <circle cx="{{ s.x }}" cy="{{ s.y }}" r="2.4" fill="var(--color-neutral-700)"></circle>
+      </sc-for>
+      <sc-for list="{{ cityLabels }}" as="t" hint-placeholder-count="8">
+        <g>{{ t.el }}</g>
+      </sc-for>
+      <sc-for list="{{ cityBuses }}" as="b" hint-placeholder-count="6">
+        <g>
+          <animateMotion dur="{{ b.dur }}" repeatCount="indefinite" path="{{ b.d }}"></animateMotion>
+          <circle cx="0" cy="0" r="13" fill="var(--color-accent)" opacity=".14"></circle>
+          <circle cx="0" cy="0" r="8" fill="var(--color-accent-800)" stroke="var(--color-accent)" stroke-width="1.3"></circle>
+          {{ b.noEl }}
+        </g>
+      </sc-for>
+      <circle cx="{{ meXY.x }}" cy="{{ meXY.y }}" r="18" fill="var(--color-accent)" opacity=".12"></circle>
+      <circle cx="{{ meXY.x }}" cy="{{ meXY.y }}" r="5" fill="var(--color-accent-200)" stroke="#12141f" stroke-width="2"></circle>
+    </svg>
+  </div>
+
+  <div style="position:relative;padding:14px 14px 0;display:flex;align-items:center;gap:8px">
+    <div style="display:flex;align-items:center;gap:7px;padding:7px 12px;border-radius:999px;background:var(--color-surface);box-shadow:var(--shadow-md);font-size:11.5px;white-space:nowrap">
+      <span style="position:relative;width:7px;height:7px;display:inline-block">
+        <span style="position:absolute;inset:0;border-radius:50%;background:var(--color-accent)"></span>
+        <span style="position:absolute;inset:0;border-radius:50%;background:var(--color-accent);animation:kPulse 1.8s ease-out infinite"></span>
+      </span>
+      {{ mapLiveBadge }}
+    </div>
+    <button class="btn btn-icon" style="margin-left:auto;background:var(--color-surface);box-shadow:var(--shadow-md);border-radius:50%" aria-label="Recentre">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--color-accent)" stroke-width="1.6" stroke-linecap="round"><circle cx="12" cy="12" r="7.4"></circle><circle cx="12" cy="12" r="2.4"></circle><path d="M12 2v2.6M12 19.4V22M2 12h2.6M19.4 12H22"></path></svg>
+    </button>
+  </div>
+
+  <div style="flex:1"></div>
+  <div style="position:relative;border-radius:var(--radius-lg) var(--radius-lg) 0 0;background:var(--color-bg);box-shadow:0 -1px 0 var(--color-neutral-800),0 -14px 32px rgba(0,0,0,.55);animation:kSheet .4s cubic-bezier(.2,.9,.2,1) both;padding-bottom:12px">
+    <div style="display:flex;justify-content:center;padding:8px 0 4px"><span style="width:38px;height:4px;border-radius:2px;background:var(--color-neutral-700)"></span></div>
+    <div style="padding:2px 16px 8px;display:flex;align-items:baseline;gap:8px">
+      <span style="font-family:var(--font-heading);font-size:16px">Buses around you</span>
+      <span style="font-size:11px;color:var(--color-neutral-500);margin-left:auto">{{ mapNearLabel }}</span>
+    </div>
+    <div style="padding:0 14px;display:flex;flex-direction:column;gap:7px;max-height:210px;overflow:auto">
+      <sc-for list="{{ mapBusList }}" as="b" hint-placeholder-count="5">
+        <div data-r="{{ b.i }}" style="display:flex;align-items:center;gap:11px;padding:9px 11px;background:var(--color-surface);border-radius:var(--radius-md)">
+          <span class="tag tag-accent" style="font-size:11px;min-width:42px;justify-content:center">{{ b.no }}</span>
+          <span style="flex:1;min-width:0">
+            <span style="display:block;font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ b.dir }}</span>
+            <span style="display:block;font-size:11px;color:var(--color-neutral-500)">{{ b.at }}</span>
+          </span>
+          <span style="text-align:right;flex:none">
+            <span style="{{ b.etaStyle }}">{{ b.eta }}</span>
+            <span style="display:block;font-size:10px;color:var(--color-neutral-500);margin-top:2px">{{ b.mode }}</span>
+          </span>
+        </div>
+      </sc-for>
+    </div>
+  </div>
+</div>
+</sc-if>
+
+<!-- ══ NEARBY ══ -->
+<sc-if value="{{ scNearby }}" hint-placeholder-val="{{ false }}">
+<div style="flex:1;display:flex;flex-direction:column">
+  <div style="padding:16px 16px 4px">
+    <div style="font-family:var(--font-heading);font-size:25px;line-height:1.1;letter-spacing:-.015em">Stops near you</div>
+    <div style="font-size:12px;color:var(--color-neutral-500);margin-top:3px">{{ locationHint }}</div>
+  </div>
+  <div style="flex:1;overflow:auto;padding:14px 14px 20px;display:flex;flex-direction:column;gap:9px">
+    <sc-for list="{{ nearbyFull }}" as="n" hint-placeholder-count="6">
+      <div data-r="{{ n.i }}" style="padding:12px;background:var(--color-surface);border-radius:var(--radius-md);box-shadow:var(--shadow-sm)">
+        <div style="display:flex;align-items:flex-start;gap:10px">
+          <span style="width:30px;height:30px;flex:none;border-radius:var(--radius-sm);background:var(--color-accent-900);display:inline-flex;align-items:center;justify-content:center;color:var(--color-accent-300)">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><rect x="3" y="4.5" width="18" height="11" rx="2"></rect><path d="M3 10h18M7.5 15.5v2M16.5 15.5v2"></path></svg>
+          </span>
+          <span style="flex:1;min-width:0">
+            <span style="display:block;font-size:14.5px;font-family:var(--font-heading);line-height:1.25">{{ n.name }}</span>
+            <span style="display:block;font-size:11.5px;color:var(--color-accent-300)">{{ n.ta }}</span>
+          </span>
+          <span style="text-align:right;flex:none">
+            <span style="display:block;font-size:13px;font-family:var(--font-heading)">{{ n.walk }}</span>
+            <span style="display:block;font-size:10.5px;color:var(--color-neutral-500)">{{ n.walkMin }}</span>
+          </span>
+        </div>
+        <div data-scroll style="display:flex;gap:6px;margin-top:10px">
+          <sc-for list="{{ n.routes }}" as="rt" hint-placeholder-count="4">
+            <span class="tag tag-neutral" style="flex:none;font-size:10.5px">{{ rt.no }}</span>
+          </sc-for>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;margin-top:10px;font-size:11.5px;color:var(--color-neutral-400);white-space:nowrap">
+          <span style="{{ n.etaStyle }}">{{ n.nextEta }}</span>
+          <span style="flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis">{{ n.nextBus }}</span>
+          <button class="btn btn-ghost" style="font-size:11.5px;flex:none;white-space:nowrap" onClick="{{ n.setFrom }}">Board from here</button>
+        </div>
+      </div>
+    </sc-for>
+  </div>
+</div>
+</sc-if>
+
+<!-- ══ ROUTE BROWSER ══ -->
+<sc-if value="{{ scRoutes }}" hint-placeholder-val="{{ false }}">
+<div style="flex:1;display:flex;flex-direction:column">
+  <div style="padding:16px 16px 8px">
+    <div style="font-family:var(--font-heading);font-size:25px;line-height:1.1;letter-spacing:-.015em">All town routes</div>
+    <div style="font-size:12px;color:var(--color-neutral-500);margin-top:3px">{{ routeCountLabel }}</div>
+  </div>
+  <div style="padding:4px 14px 10px;position:relative">
+    <input class="input" style="height:40px;padding-left:34px" placeholder="Bus number or place — try 70, Ukkadam" value="{{ routeQ }}" onChange="{{ onRouteQ }}"></input>
+    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="var(--color-neutral-500)" stroke-width="1.7" stroke-linecap="round" style="position:absolute;left:24px;top:16px"><circle cx="11" cy="11" r="6.5"></circle><path d="M16 16l4.5 4.5"></path></svg>
+  </div>
+  <div style="flex:1;overflow:auto;padding:0 14px 20px">
+    <sc-for list="{{ routeList }}" as="r" hint-placeholder-count="12">
+      <div style="display:flex;align-items:center;gap:12px;padding:10px 4px;border-bottom:1px solid var(--color-divider)">
+        <span style="{{ r.badgeStyle }}">{{ r.no }}</span>
+        <span style="flex:1;min-width:0;display:flex;align-items:center;gap:7px;font-size:13px">
+          <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1">{{ r.from }}</span>
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--color-neutral-600)" stroke-width="2" stroke-linecap="round" style="flex:none"><path d="M4 12h16M20 12l-5-5M20 12l-5 5"></path></svg>
+          <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1">{{ r.to }}</span>
+        </span>
+        <sc-if value="{{ r.tracked }}" hint-placeholder-val="{{ false }}">
+          <span style="width:6px;height:6px;border-radius:50%;background:var(--color-accent);flex:none"></span>
+        </sc-if>
+      </div>
+    </sc-for>
+  </div>
+</div>
+</sc-if>
+
+<!-- ══ YOU ══ -->
+<sc-if value="{{ scYou }}" hint-placeholder-val="{{ false }}">
+<div style="flex:1;display:flex;flex-direction:column">
+  <div style="padding:18px 16px 10px;display:flex;align-items:center;gap:13px">
+    <span style="width:52px;height:52px;border-radius:50%;background:var(--color-accent-800);color:var(--color-accent-100);display:inline-flex;align-items:center;justify-content:center;font-family:var(--font-heading);font-size:21px">{{ initial }}</span>
+    <span style="flex:1;min-width:0">
+      <span style="display:block;font-family:var(--font-heading);font-size:21px;line-height:1.15">{{ userName }}</span>
+      <span style="display:block;font-size:12px;color:var(--color-neutral-500)">{{ userEmail }}</span>
+    </span>
+  </div>
+
+  <div style="padding:10px 14px 0;display:flex;gap:9px">
+    <div style="flex:1;padding:11px;background:var(--color-surface);border-radius:var(--radius-md)">
+      <div style="font-family:var(--font-heading);font-size:20px">{{ statTrips }}</div>
+      <div style="font-size:10.5px;color:var(--color-neutral-500);letter-spacing:.06em;text-transform:uppercase">Trips saved</div>
+    </div>
+    <div style="flex:1;padding:11px;background:var(--color-surface);border-radius:var(--radius-md)">
+      <div style="font-family:var(--font-heading);font-size:20px">{{ statSpend }}</div>
+      <div style="font-size:10.5px;color:var(--color-neutral-500);letter-spacing:.06em;text-transform:uppercase">This month</div>
+    </div>
+  </div>
+
+  <div style="padding:20px 16px 6px;font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--color-neutral-500)">Saved places</div>
+  <div style="padding:0 14px;display:flex;flex-direction:column;gap:7px">
+    <sc-for list="{{ savedPlaces }}" as="s" hint-placeholder-count="3">
+      <button onClick="{{ s.pick }}" style="display:flex;align-items:center;gap:11px;padding:11px;background:var(--color-surface);border:0;border-radius:var(--radius-md);color:inherit;font:inherit;cursor:pointer;text-align:left" style-hover="{{ hoverSurface }}">
+        <span style="width:28px;height:28px;flex:none;border-radius:var(--radius-sm);background:var(--color-accent-900);color:var(--color-accent-300);display:inline-flex;align-items:center;justify-content:center;font-size:13px">{{ s.glyph }}</span>
+        <span style="flex:1;min-width:0">
+          <span style="display:block;font-size:13.5px">{{ s.label }}</span>
+          <span style="display:block;font-size:11px;color:var(--color-neutral-500);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ s.place }}</span>
+        </span>
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="var(--color-neutral-600)" stroke-width="1.6" stroke-linecap="round"><path d="M9 5l7 7-7 7"></path></svg>
+      </button>
+    </sc-for>
+  </div>
+
+  <div style="padding:20px 16px 6px;font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--color-neutral-500)">Saved trips</div>
+  <div style="padding:0 14px;display:flex;flex-direction:column;gap:7px">
+    <sc-for list="{{ savedTripList }}" as="t" hint-placeholder-count="1">
+      <button onClick="{{ t.pick }}" style="display:flex;align-items:center;gap:11px;padding:11px;background:var(--color-surface);border:0;border-radius:var(--radius-md);color:inherit;font:inherit;cursor:pointer;text-align:left" style-hover="{{ hoverSurface }}">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="var(--color-accent)" stroke="none" style="flex:none"><path d="M12 3.6l2.7 5.6 6.1.8-4.5 4.3 1.1 6.1L12 17.4 6.6 20.4l1.1-6.1L3.2 10l6.1-.8z"></path></svg>
+        <span style="flex:1;min-width:0">
+          <span style="display:block;font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ t.label }}</span>
+          <span style="display:block;font-size:11px;color:var(--color-neutral-500)">{{ t.sub }}</span>
+        </span>
+      </button>
+    </sc-for>
+    <sc-if value="{{ noSavedTrips }}" hint-placeholder-val="{{ true }}">
+      <div style="padding:12px;font-size:12px;color:var(--color-neutral-500);background:var(--color-surface);border-radius:var(--radius-md)">Star a trip on the detail screen and it lands here.</div>
+    </sc-if>
+  </div>
+
+  <div style="padding:20px 14px 26px;display:flex;flex-direction:column;gap:7px">
+    <button onClick="{{ goFare }}" style="display:flex;align-items:center;gap:11px;padding:12px;background:var(--color-surface);border:0;border-radius:var(--radius-md);color:inherit;font:inherit;cursor:pointer;text-align:left" style-hover="{{ hoverSurface }}">
+      <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="var(--color-accent)" stroke-width="1.6" stroke-linecap="round" style="flex:none"><rect x="3" y="6.5" width="18" height="11" rx="2"></rect><path d="M9 6.5v11"></path></svg>
+      <span style="flex:1;font-size:13.5px">Fares &amp; passes</span>
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="var(--color-neutral-600)" stroke-width="1.6" stroke-linecap="round"><path d="M9 5l7 7-7 7"></path></svg>
+    </button>
+    <button onClick="{{ onSignOut }}" class="btn btn-secondary btn-block" style="height:42px">Sign out</button>
+  </div>
+</div>
+</sc-if>
+
+<!-- ══ FARE ══ -->
+<sc-if value="{{ scFare }}" hint-placeholder-val="{{ false }}">
+<div style="flex:1;display:flex;flex-direction:column">
+  <div style="padding:14px 14px 6px;display:flex;align-items:center;gap:10px">
+    <button class="btn btn-icon btn-secondary" onClick="{{ goYou }}" aria-label="Back">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M15 5l-7 7 7 7"></path></svg>
+    </button>
+    <div style="font-family:var(--font-heading);font-size:21px;line-height:1.15">Fares &amp; passes</div>
+  </div>
+  <div style="flex:1;overflow:auto;padding:10px 16px 24px">
+    <div style="font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--color-neutral-500);margin-bottom:6px">Ordinary town bus</div>
+    <table class="table">
+      <thead><tr><th>Distance</th><th>Fare</th><th style="text-align:right">Typical trip</th></tr></thead>
+      <tbody>
+        <sc-for list="{{ fareSlabs }}" as="f" hint-placeholder-count="6">
+          <tr><td>{{ f.range }}</td><td style="color:var(--color-accent-300)">{{ f.fare }}</td><td style="text-align:right;font-size:12px;color:var(--color-neutral-500)">{{ f.eg }}</td></tr>
+        </sc-for>
+      </tbody>
+    </table>
+    <div style="height:20px"></div>
+    <div style="font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--color-neutral-500);margin-bottom:8px">Passes</div>
+    <div style="display:flex;flex-direction:column;gap:9px">
+      <sc-for list="{{ passes }}" as="p" hint-placeholder-count="3">
+        <div data-r="{{ p.i }}" class="card elev-sm" style="gap:5px">
+          <div class="card-kicker">{{ p.kicker }}</div>
+          <div style="display:flex;align-items:baseline;gap:8px">
+            <div class="card-title">{{ p.name }}</div>
+            <div style="margin-left:auto;font-family:var(--font-heading);font-size:19px;color:var(--color-accent-300)">{{ p.price }}</div>
+          </div>
+          <p class="card-body">{{ p.body }}</p>
+        </div>
+      </sc-for>
+    </div>
+    <div style="height:18px"></div>
+    <div style="padding:12px;border-radius:var(--radius-md);border:1px solid var(--color-accent-800);background:var(--color-accent-900)">
+      <div style="font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--color-accent-300)">Your planned trip</div>
+      <div style="font-family:var(--font-heading);font-size:17px;margin-top:4px">{{ fareTripLabel }}</div>
+      <div style="font-size:12px;color:var(--color-neutral-400);margin-top:3px">{{ fareTripSub }}</div>
+    </div>
+    <p style="margin-top:16px;font-size:11px;color:var(--color-neutral-600);line-height:1.5">Slabs shown are indicative. Route numbers and endpoints come from the Coimbatore City Municipal Corporation town-bus list; intermediate stops in this prototype are corridor reconstructions.</p>
+  </div>
+</div>
+</sc-if>
+
+<!-- ══ TOAST ══ -->
+<sc-if value="{{ toastOn }}" hint-placeholder-val="{{ false }}">
+  <div style="position:absolute;left:0;right:0;bottom:78px;display:flex;justify-content:center;pointer-events:none;z-index:8">
+    <div style="padding:9px 14px;border-radius:999px;background:var(--color-surface);box-shadow:var(--shadow-md);font-size:12.5px;animation:kRise .3s ease both">{{ toast }}</div>
+  </div>
+</sc-if>
+
+<!-- ══ BOTTOM NAV ══ -->
+<sc-if value="{{ showNav }}" hint-placeholder-val="{{ false }}">
+<div style="position:sticky;bottom:0;z-index:9;display:flex;background:var(--color-surface);box-shadow:0 -1px 0 var(--color-neutral-800)">
+  <sc-for list="{{ navItems }}" as="n" hint-placeholder-count="5">
+    <button onClick="{{ n.pick }}" style="{{ n.style }}">
+      <span style="{{ n.markStyle }}"></span>
+      {{ n.icon }}
+      <span style="font-size:9.5px;letter-spacing:.03em">{{ n.label }}</span>
+    </button>
+  </sc-for>
+</div>
+</sc-if>
+
+</div>
+</x-import>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:460,&quot;height&quot;:940},&quot;showTamil&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Content&quot;,&quot;label&quot;:&quot;Tamil place names&quot;},&quot;liveTracking&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Content&quot;,&quot;label&quot;:&quot;Live bus tracking&quot;},&quot;maxWalk&quot;:{&quot;editor&quot;:&quot;range&quot;,&quot;default&quot;:1700,&quot;min&quot;:400,&quot;max&quot;:2500,&quot;step&quot;:100,&quot;unit&quot;:&quot;m&quot;,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;Planner&quot;,&quot;label&quot;:&quot;Max walk to a stop&quot;},&quot;startScreen&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;Sign in&quot;,&quot;Home&quot;,&quot;Results&quot;,&quot;Trip detail&quot;],&quot;default&quot;:&quot;Sign in&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Prototype&quot;,&quot;label&quot;:&quot;Open on&quot;}}">
+const R = React.createElement;
+const ICON = {
+  plan: R('svg', { width: 21, height: 21, viewBox: '0 0 24 24', fill: 'none', stroke: 'currentColor', strokeWidth: 1.6, strokeLinecap: 'round' },
+    R('circle', { cx: 6, cy: 6, r: 2.4 }), R('circle', { cx: 18, cy: 18, r: 2.4 }),
+    R('path', { d: 'M6 8.6v4.4a4.4 4.4 0 0 0 4.4 4.4H15.4' })),
+  map: R('svg', { width: 21, height: 21, viewBox: '0 0 24 24', fill: 'none', stroke: 'currentColor', strokeWidth: 1.6, strokeLinecap: 'round', strokeLinejoin: 'round' },
+    R('path', { d: 'M9 3.6L3 6.1v14.3l6-2.5 6 2.5 6-2.5V3.6L15 6.1z' }), R('path', { d: 'M9 3.6v14.3M15 6.1v14.3' })),
+  nearby: R('svg', { width: 21, height: 21, viewBox: '0 0 24 24', fill: 'none', stroke: 'currentColor', strokeWidth: 1.6, strokeLinecap: 'round' },
+    R('path', { d: 'M12 21s7-6.6 7-11a7 7 0 1 0-14 0c0 4.4 7 11 7 11z' }), R('circle', { cx: 12, cy: 10, r: 2.3 })),
+  routes: R('svg', { width: 21, height: 21, viewBox: '0 0 24 24', fill: 'none', stroke: 'currentColor', strokeWidth: 1.6, strokeLinecap: 'round' },
+    R('rect', { x: 3, y: 4.5, width: 18, height: 11, rx: 2 }), R('path', { d: 'M3 10h18M7.5 15.5v2M16.5 15.5v2' })),
+  you: R('svg', { width: 21, height: 21, viewBox: '0 0 24 24', fill: 'none', stroke: 'currentColor', strokeWidth: 1.6, strokeLinecap: 'round' },
+    R('circle', { cx: 12, cy: 8.4, r: 3.4 }), R('path', { d: 'M5.4 20c0-3.4 3-5.9 6.6-5.9s6.6 2.5 6.6 5.9' })),
+  walk: R('svg', { width: 15, height: 15, viewBox: '0 0 24 24', fill: 'none', stroke: 'currentColor', strokeWidth: 1.7, strokeLinecap: 'round', strokeLinejoin: 'round' },
+    R('circle', { cx: 12.5, cy: 4, r: 2 }), R('path', { d: 'M12.5 6.2v5.6L9 20M12.5 11.8l3.4 3.1L17 20M9.5 9.2l6-1.1' })),
+  bus: R('svg', { width: 15, height: 15, viewBox: '0 0 24 24', fill: 'none', stroke: 'currentColor', strokeWidth: 1.7, strokeLinecap: 'round' },
+    R('rect', { x: 3, y: 4.5, width: 18, height: 11, rx: 2 }), R('path', { d: 'M3 10h18M7.5 15.5v2M16.5 15.5v2' })),
+  flag: R('svg', { width: 15, height: 15, viewBox: '0 0 24 24', fill: 'none', stroke: 'currentColor', strokeWidth: 1.7, strokeLinecap: 'round', strokeLinejoin: 'round' },
+    R('path', { d: 'M6 21V4h12l-2.5 5L18 14H6' })),
+  swapv: R('svg', { width: 15, height: 15, viewBox: '0 0 24 24', fill: 'none', stroke: 'currentColor', strokeWidth: 1.7, strokeLinecap: 'round' },
+    R('path', { d: 'M7 5v13M7 18l-3.2-3.2M17 19V6M17 6l3.2 3.2' })),
+  pin: R('svg', { width: 15, height: 15, viewBox: '0 0 24 24', fill: 'none', stroke: 'currentColor', strokeWidth: 1.7, strokeLinecap: 'round' },
+    R('path', { d: 'M12 21s7-6.6 7-11a7 7 0 1 0-14 0c0 4.4 7 11 7 11z' }), R('circle', { cx: 12, cy: 10, r: 2.3 })),
+  stop: R('svg', { width: 15, height: 15, viewBox: '0 0 24 24', fill: 'none', stroke: 'currentColor', strokeWidth: 1.7, strokeLinecap: 'round' },
+    R('rect', { x: 4, y: 3.5, width: 16, height: 10, rx: 2 }), R('path', { d: 'M4 9h16M12 13.5V21M8 21h8' })),
+};
+
+const NAV = [
+  ['plan', 'Plan', 'plan'], ['map', 'Live map', 'map'], ['nearby', 'Nearby', 'nearby'],
+  ['routes', 'Routes', 'routes'], ['you', 'You', 'you'],
+];
+const SORTS = [['Fastest', 'Fastest'], ['Fewest transfers', 'Fewest changes'], ['Least walking', 'Least walking'], ['Leaving soonest', 'Leaving soonest']];
+const MUTED = 'color-mix(in srgb, var(--color-text) 55%, transparent)';
+
+const svgText = (key, x, y, str, fill, size, anchor) => R('text', {
+  key, x, y, textAnchor: anchor || 'start',
+  style: { fill: fill, fontSize: size + 'px', fontFamily: 'Inter, sans-serif', pointerEvents: 'none' },
+}, str);
+
+class Component extends DCLogic {
+  constructor(p) {
+    super(p);
+    this.seed = 'kovai-2026';
+    this.t0 = Date.now();
+    this.state = {
+      screen: 'auth', authStep: 0, user: null, nameDraft: 'Karthik',
+      from: null, to: null, target: 'from', query: '', sort: 'Fastest',
+      expanded: null, sel: null, tick: 0, fromAnim: '', toAnim: '',
+      jStep: 0, routeQ: '', tab: 'plan', savedTrips: [], toast: '',
+    };
+  }
+
+  componentDidMount() {
+    this.poll();
+    this.timer = setInterval(() => this.setState((s) => ({ tick: s.tick + 1 })), 1000);
+  }
+  componentWillUnmount() { clearInterval(this.timer); clearInterval(this.jt); clearTimeout(this.tt); }
+
+  poll() {
+    if (window.KovaiData) {
+      this.D = window.KovaiData;
+      const f = this.D.searchIndex.find((x) => x.name.indexOf('Codissia') === 0);
+      const t = this.D.searchIndex.find((x) => x.name.indexOf('Marudhamalai') === 0);
+      this.me = { name: 'Your location', lat: 11.0262, lng: 77.0068 };
+      this.setState({ from: f, to: t });
+      const st = this.props.startScreen;
+      if (st && st !== 'Sign in') this.setState({ screen: st === 'Home' ? 'home' : st === 'Results' ? 'results' : 'trip', user: { name: 'Karthik', email: 'karthik.r@gmail.com' }, tab: 'plan' });
+    } else setTimeout(() => this.poll(), 50);
+  }
+
+  /* ── settings ─────────────────────────────────────────────── */
+  get showTamil() { return this.props.showTamil !== false; }
+  get liveOn() { return this.props.liveTracking !== false; }
+  get maxWalk() { return (this.props.maxWalk || 1700) / 1000; }
+
+  /* ── helpers ──────────────────────────────────────────────── */
+  ta(v) { return this.showTamil && v ? v : ''; }
+  clock(addMin) {
+    const d = new Date(this.t0 + (addMin || 0) * 60000);
+    let h = d.getHours(); const m = String(d.getMinutes()).padStart(2, '0');
+    const ap = h >= 12 ? 'pm' : 'am'; h = h % 12 || 12;
+    return h + ':' + m + ' ' + ap;
+  }
+  dist(m) { return m >= 1000 ? (m / 1000).toFixed(1) + ' km' : m + ' m'; }
+  liveEta(baseMin, headway) {
+    const period = Math.max(3, headway) * 60;
+    let s = (baseMin * 60 - this.state.tick) % period;
+    if (s < 0) s += period;
+    if (s < 90) return { label: Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0'), urgent: true };
+    return { label: Math.round(s / 60) + ' min', urgent: false };
+  }
+  say(msg) { clearTimeout(this.tt); this.setState({ toast: msg }); this.tt = setTimeout(() => this.setState({ toast: '' }), 2200); }
+  go(screen, extra) { this.setState(Object.assign({ screen }, extra || {})); }
+
+  journeys() {
+    const { from, to, sort } = this.state;
+    if (!this.D || !from || !to) return [];
+    const key = from.id + '|' + to.id + '|' + this.maxWalk;
+    if (!this._c || this._c.key !== key) this._c = { key, js: this.D.plan(from, to, this.seed, this.maxWalk) };
+    const cmp = this.D.sorters[sort] || this.D.sorters.Fastest;
+    return this._c.js.slice().sort(cmp);
+  }
+
+  chipStyle(active) {
+    return {
+      flex: 'none', cursor: 'pointer', font: 'inherit', fontSize: 12, padding: '6px 12px',
+      borderRadius: 'var(--radius-md)', whiteSpace: 'nowrap',
+      background: active ? 'var(--color-accent-800)' : 'transparent',
+      color: active ? 'var(--color-accent-100)' : MUTED,
+      border: '1px solid ' + (active ? 'var(--color-accent)' : 'var(--color-divider)'),
+    };
+  }
+
+  /* ── decorate a journey for the result card ───────────────── */
+  decorate(j, i) {
+    const rides = j.legs.filter((l) => l.type === 'ride');
+    const first = rides[0];
+    const eta = this.liveEta(first.live.eta, first.headway);
+    const tracked = first.live.tracked && this.liveOn;
+    return {
+      key: j.id, i,
+      timeLabel: j.totalMin + ' min',
+      arrive: this.clock(j.totalMin),
+      fareLabel: '₹' + j.fare,
+      walkLabel: this.dist(j.walkMeters) + ' walk',
+      changeLabel: j.transfers === 0 ? 'Direct' : j.transfers + (j.transfers > 1 ? ' changes' : ' change'),
+      boardLabel: 'Board ' + first.bus + ' at ' + first.board.name + ' · every ' + first.headway + ' min',
+      etaLabel: tracked ? 'in ' + eta.label : '~' + eta.label,
+      etaStyle: { color: tracked ? (eta.urgent ? 'var(--color-accent-200)' : 'var(--color-accent-300)') : MUTED, fontVariantNumeric: 'tabular-nums' },
+      chips: rides.map((l, k) => ({
+        key: l.bus + '-' + k, no: l.bus,
+        style: {
+          display: 'inline-flex', alignItems: 'center', gap: 5, padding: '4px 9px',
+          borderRadius: 'var(--radius-sm)', fontSize: 12.5, fontFamily: 'var(--font-heading)',
+          background: 'var(--color-accent-800)', color: 'var(--color-accent-100)',
+        },
+        dotStyle: {
+          width: 6, height: 6, borderRadius: '50%', display: l.live.tracked && this.liveOn ? 'inline-block' : 'none',
+          background: 'var(--color-accent-200)', animation: 'kGlow 1.4s ease-in-out infinite',
+        },
+      })),
+      bar: [
+        { key: 'w', style: { flex: Math.max(1, j.walkMin), height: 6, borderRadius: 3, background: 'var(--color-accent-800)' } },
+        { key: 'q', style: { flex: Math.max(1, j.waitMin), height: 6, borderRadius: 3, background: 'var(--color-neutral-800)' } },
+        { key: 'r', style: { flex: Math.max(1, j.rideMin), height: 6, borderRadius: 3, background: 'var(--color-accent)' } },
+      ],
+      open: this.state.expanded === j.id,
+      openLabel: this.state.expanded === j.id ? 'Hide steps' : j.legs.length + ' steps',
+      chevStyle: { transform: this.state.expanded === j.id ? 'rotate(180deg)' : 'none', transition: 'transform .22s' },
+      steps: j.legs.map((l, k) => this.miniStep(l, k, j)),
+      onOpen: () => this.setState((s) => ({ expanded: s.expanded === j.id ? null : j.id })),
+      onGo: () => this.setState({ sel: j, screen: 'trip', jStep: 0 }),
+    };
+  }
+
+  miniStep(l, k, j) {
+    const last = k === j.legs.length - 1;
+    const walk = l.type === 'walk';
+    return {
+      key: k,
+      title: walk
+        ? (l.atTransfer ? 'Change — walk ' + l.meters + ' m to ' + l.to.name : (k === 0 ? 'Walk ' + l.meters + ' m to ' + l.to.name : 'Walk ' + l.meters + ' m to ' + (l.to.name || 'destination')))
+        : 'Bus ' + l.bus + ' · ' + l.board.name + ' → ' + l.alight.name,
+      sub: walk ? l.min + ' min on foot' : l.nStops + ' stops · ' + l.min + ' min · ₹' + l.fare,
+      dotStyle: {
+        width: 9, height: 9, borderRadius: '50%', flex: 'none', marginTop: 5,
+        background: walk ? 'transparent' : 'var(--color-accent)',
+        border: walk ? '2px solid var(--color-neutral-600)' : 'none',
+      },
+      railStyle: { flex: 1, width: 0, borderLeft: (walk ? '2px dotted var(--color-neutral-700)' : '2px solid var(--color-accent-700)'), display: last ? 'none' : 'block', margin: '3px 0' },
+    };
+  }
+
+  /* ── map plumbing ─────────────────────────────────────────── */
+  tripGeo(j, w, h) {
+    const D = this.D;
+    const pts = [j.origin, j.dest];
+    j.legs.forEach((l) => { if (l.type === 'ride') l.via.forEach((id) => pts.push(D.byId[id])); });
+    const P = D.project(pts, w, h, 40);
+    const xy = (p) => { const a = P(p); return { x: a[0], y: a[1] }; };
+    const roads = D.roads.map((rd, i) => ({
+      key: i, points: rd.pts.map((p) => P(p).map((n) => n.toFixed(1)).join(',')).join(' '),
+      style: { fill: 'none', stroke: 'var(--color-neutral-800)', strokeWidth: rd.w * 3.2, strokeLinecap: 'round', strokeLinejoin: 'round' },
+    }));
+    const rideLines = []; const walkLines = []; const dots = []; const labels = []; const labelled = {};
+    let pathD = '';
+    j.legs.forEach((l, k) => {
+      if (l.type === 'ride') {
+        const seq = l.via.map((id) => P(D.byId[id]));
+        rideLines.push({ key: k, points: seq.map((a) => a.map((n) => n.toFixed(1)).join(',')).join(' ') });
+        pathD += (pathD ? ' L' : 'M') + seq.map((a) => a[0].toFixed(1) + ' ' + a[1].toFixed(1)).join(' L');
+        l.via.forEach((id, m) => {
+          const a = P(D.byId[id]);
+          dots.push({ key: k + '-' + m, x: +a[0].toFixed(1), y: +a[1].toFixed(1) });
+          if ((m === 0 || m === l.via.length - 1) && !labelled[id]) {
+            labelled[id] = 1;
+            const name = D.byId[id].name;
+            const est = name.length * 5.1;
+            const right = a[0] + 8 + est > w - 6;
+            const lx = +(right ? a[0] - 8 : a[0] + 8).toFixed(1);
+            const ly = +Math.max(12, a[1] - 7).toFixed(1);
+            labels.push({ key: 'l' + k + m, el: svgText('t' + k + m, lx, ly, name, 'var(--color-neutral-300)', 9.5, right ? 'end' : 'start') });
+          }
+        });
+      } else {
+        const a = P(l.from), b = P(l.to);
+        walkLines.push({ key: 'w' + k, points: a.map((n) => n.toFixed(1)).join(',') + ' ' + b.map((n) => n.toFixed(1)).join(',') });
+      }
+    });
+    return { roads, rideLines, walkLines, dots, labels, pathD, origin: xy(j.origin), dest: xy(j.dest) };
+  }
+
+  cityGeo(w, h) {
+    const D = this.D;
+    const core = ['maruthamalai', 'vadavalli', 'thondamuthur', 'gandhipuram', 'ukkadam', 'townhall', 'railway', 'peelamedu', 'hopecollege', 'airport', 'singanallur', 'ondipudur', 'irugur', 'saibaba', 'thudiyalur', 'nggo', 'ganapathy', 'sitra', 'saravanampatti', 'kalapatti', 'kuniamuthur', 'sundarapuram', 'eachanari', 'madukkarai', 'kovaipudur', 'vellalore', 'velandipalayam', 'kanuvai', 'perur', 'sowripalayam', 'lakshmimills', 'chinnavedampatti'].map((i) => D.byId[i]);
+    const P = D.project(core, w, h, 46);
+    const roads = D.roads.map((rd, i) => ({ key: i, w: (rd.w * 3.6).toFixed(1), points: rd.pts.map((p) => P(p).map((n) => n.toFixed(1)).join(',')).join(' ') }));
+    const stops = D.stops.map((s, i) => { const a = P(s); return { key: i, x: +a[0].toFixed(1), y: +a[1].toFixed(1) }; });
+    const bigs = ['Gandhipuram', 'Ukkadam', 'Peelamedu', 'Singanallur', 'Saibaba Colony', 'Vadavalli', 'Ganapathy', 'Kuniamuthur', 'Thudiyalur', 'Hope College'];
+    const labels = D.stops.filter((s) => bigs.some((b) => s.name.indexOf(b) === 0)).map((s, i) => { const a = P(s); return { key: i, el: svgText('c' + i, +(a[0] + 7).toFixed(1), +(a[1] - 6).toFixed(1), s.name.replace(' Bus Stand', ''), 'var(--color-neutral-500)', 9.5) }; });
+    const tracked = D.routes.filter((r) => r.tracked).slice(0, 7);
+    const buses = tracked.map((r, i) => ({
+      key: r.no, no: r.no, dur: (17 + i * 3.5) + 's', noEl: svgText('b' + i, 0, 3, r.no, 'var(--color-accent-100)', 8, 'middle'),
+      d: 'M' + r.ids.map((id) => P(D.byId[id]).map((n) => n.toFixed(1)).join(' ')).join(' L'),
+    }));
+    const m = P(this.me);
+    return { roads, stops, labels, buses, me: { x: +m[0].toFixed(1), y: +m[1].toFixed(1) } };
+  }
+
+  /* ── in-journey list ──────────────────────────────────────── */
+  jList() {
+    const j = this.state.sel; const D = this.D;
+    if (!j) return [];
+    const out = [];
+    j.legs.forEach((l, k) => {
+      if (l.type === 'walk') {
+        out.push({ kind: 'walk', name: l.atTransfer ? 'Change buses — walk ' + l.meters + ' m' : (k === 0 ? 'Walk to ' + l.to.name : 'Walk to ' + (l.to.name || 'destination')), sub: l.min + ' min · ' + l.meters + ' m', bus: null });
+      } else {
+        const prev = j.legs[k - 1];
+        if (prev && prev.type === 'ride') out.push({ kind: 'change', name: 'Change to bus ' + l.bus, sub: 'Same stop · ' + l.board.name + ' · wait ~' + Math.round(l.headway / 2) + ' min', bus: l.bus });
+        l.via.forEach((id, m) => {
+          const s = D.byId[id];
+          if (m === 0 && prev && prev.type === 'ride') return;
+          out.push({ kind: 'stop', name: s.name, sub: m === 0 ? 'Board bus ' + l.bus : (m === l.via.length - 1 ? 'Get off here' : this.ta(s.ta) || 'Bus ' + l.bus), bus: l.bus, board: m === 0, alight: m === l.via.length - 1, live: l.live });
+        });
+      }
+    });
+    return out;
+  }
+
+  /* ── render values ────────────────────────────────────────── */
+  renderVals() {
+    const D = this.D; const st = this.state;
+    const hoverSurface = { background: 'var(--color-neutral-800)' };
+    const hoverTint = { background: 'color-mix(in srgb, var(--color-text) 6%, transparent)' };
+    const base = {
+      hoverSurface, hoverTint,
+      scAuth: st.screen === 'auth', scHome: st.screen === 'home', scPicker: st.screen === 'picker',
+      scResults: st.screen === 'results', scTrip: st.screen === 'trip', scBoard: st.screen === 'boarding',
+      scJourney: st.screen === 'journey', scMap: st.screen === 'map', scNearby: st.screen === 'nearby',
+      scRoutes: st.screen === 'routes', scYou: st.screen === 'you', scFare: st.screen === 'fare',
+      authStep0: st.authStep === 0, authStep1: st.authStep === 1, authStep2: st.authStep === 2,
+      toast: st.toast, toastOn: !!st.toast,
+      showNav: ['home', 'map', 'nearby', 'routes', 'you'].indexOf(st.screen) >= 0,
+      onGoogle: () => this.setState({ authStep: 1 }),
+      accounts: [
+        { key: 'a', name: 'Karthik R', email: 'karthik.r@gmail.com', initial: 'K', pick: () => this.setState({ authStep: 2, nameDraft: 'Karthik', user: { name: 'Karthik', email: 'karthik.r@gmail.com' } }) },
+        { key: 'b', name: 'Add another account', email: 'Use a different Gmail', initial: '+', pick: () => this.setState({ authStep: 2, nameDraft: '', user: { name: '', email: 'you@gmail.com' } }) },
+      ],
+      nameDraft: st.nameDraft,
+      onName: (e) => this.setState({ nameDraft: e.target.value }),
+      onFinishAuth: () => this.setState({ user: { name: st.nameDraft || 'Traveller', email: (st.user && st.user.email) || 'you@gmail.com' }, screen: 'home', tab: 'plan' }),
+      onSignOut: () => this.setState({ screen: 'auth', authStep: 0, user: null }),
+      userName: (st.user && st.user.name) || st.nameDraft || 'Traveller',
+      userEmail: (st.user && st.user.email) || 'you@gmail.com',
+      initial: (((st.user && st.user.name) || 'T')[0] || 'T').toUpperCase(),
+      greeting: 'Vanakkam' + (this.showTamil ? ' · வணக்கம்' : ''),
+      goHome: () => this.go('home', { tab: 'plan' }), goYou: () => this.go('you', { tab: 'you' }),
+      goNearby: () => this.go('nearby', { tab: 'nearby' }), goResults: () => this.go('results'),
+      goTrip: () => this.go('trip'), goBoarding: () => this.go('boarding'), goFare: () => this.go('fare'),
+      goBack: () => this.go(st.sel ? 'home' : 'home'),
+      navItems: NAV.map(([id, label, ic]) => {
+        const active = st.tab === id;
+        return {
+          key: id, label, icon: ICON[ic],
+          pick: () => this.setState({ tab: id, screen: id === 'plan' ? 'home' : id }),
+          style: {
+            flex: 1, position: 'relative', display: 'flex', flexDirection: 'column', alignItems: 'center',
+            gap: 3, padding: '9px 0 11px', background: 'none', border: 0, cursor: 'pointer',
+            font: 'inherit', color: active ? 'var(--color-accent)' : MUTED,
+          },
+          markStyle: { position: 'absolute', top: 0, left: '50%', transform: 'translateX(-50%)', width: 22, height: 2, borderRadius: 1, background: 'var(--color-accent)', display: active ? 'block' : 'none' },
+        };
+      }),
+    };
+    if (!D) return base;
+
+    /* places */
+    const from = st.from, to = st.to;
+    const fromNear = from ? D.nearStops(from, 2.2, 1)[0] : null;
+    const toNear = to ? D.nearStops(to, 2.2, 1)[0] : null;
+    const sub = (p, n) => {
+      if (!p) return 'Tap to choose';
+      if (p.isStop) return 'Bus stop' + (this.showTamil && p.ta ? ' · ' + p.ta : '');
+      return n ? 'Nearest stop ' + this.dist(D.meters(n.d)) + ' — ' + n.stop.name : 'No stop nearby';
+    };
+
+    const js = this.journeys();
+    const results = js.map((j, i) => this.decorate(j, i));
+    const trackedCount = js.filter((j) => j.tracked).length;
+
+    /* nearby */
+    const near = D.nearStops(this.me, 2.6, 8).map((x, i) => {
+      const rs = D.stopRoutes[x.stop.id] || [];
+      const r0 = rs.find((r) => r.tracked) || rs[0];
+      const eta = r0 ? this.liveEta(D.liveFor(r0, x.stop.id, this.seed).eta, r0.headway) : null;
+      return {
+        key: x.stop.id, i, name: x.stop.name.replace(' Bus Stand', ''), ta: this.ta(x.stop.ta),
+        walk: this.dist(D.meters(x.d)), walkMin: D.walkMin(x.d) + ' min walk',
+        routes: rs.slice(0, 7).map((r) => ({ key: r.no, no: r.no })),
+        nextBus: r0 ? 'Bus ' + r0.no + ' → ' + r0.to : '',
+        nextEta: eta ? (r0.tracked && this.liveOn ? 'in ' + eta.label : '~' + eta.label) : '',
+        etaStyle: { color: r0 && r0.tracked && this.liveOn ? 'var(--color-accent-200)' : MUTED, fontVariantNumeric: 'tabular-nums' },
+        setFrom: () => { this.setState({ from: { id: x.stop.id, name: x.stop.name, ta: x.stop.ta, lat: x.stop.lat, lng: x.stop.lng, isStop: true }, screen: 'home', tab: 'plan' }); this._c = null; this.say('Boarding from ' + x.stop.name); },
+      };
+    });
+
+    /* picker */
+    const q = st.query.trim().toLowerCase();
+    const pool = D.searchIndex.filter((p) => !q || p.name.toLowerCase().indexOf(q) >= 0 || (p.ta || '').indexOf(st.query.trim()) >= 0);
+    const pickerResults = pool.slice(0, 40).map((p) => {
+      const n = p.isStop ? null : D.nearStops(p, 2.4, 1)[0];
+      return {
+        key: p.id, name: p.name,
+        sub: p.isStop ? (D.stopRoutes[p.id] || []).length + ' routes' + (this.showTamil && p.ta ? ' · ' + p.ta : '') : (n ? 'Landmark · nearest stop ' + this.dist(D.meters(n.d)) + ' away' : 'Landmark'),
+        icon: p.isStop ? ICON.stop : ICON.pin,
+        iconBg: p.isStop ? 'var(--color-accent-900)' : 'var(--color-neutral-900)',
+        iconFg: p.isStop ? 'var(--color-accent-300)' : 'var(--color-neutral-400)',
+        pick: () => { this._c = null; this.setState(st.target === 'from' ? { from: p, screen: 'home', query: '' } : { to: p, screen: 'home', query: '' }); },
+      };
+    });
+
+    /* route browser */
+    const rq = st.routeQ.trim().toLowerCase();
+    const trackedNos = {}; D.routes.forEach((r) => { if (r.tracked) trackedNos[r.no] = 1; });
+    const routeList = D.allRoutes.filter((r) => !rq || r.no.toLowerCase().indexOf(rq) >= 0 || r.from.toLowerCase().indexOf(rq) >= 0 || r.to.toLowerCase().indexOf(rq) >= 0).slice(0, 120).map((r, i) => ({
+      key: r.no + i, no: r.no, from: r.from, to: r.to, tracked: !!trackedNos[r.no.split(',')[0]],
+      badgeStyle: { flex: 'none', minWidth: 52, textAlign: 'center', padding: '4px 7px', borderRadius: 'var(--radius-sm)', background: 'var(--color-neutral-900)', border: '1px solid var(--color-divider)', fontFamily: 'var(--font-heading)', fontSize: 12 },
+    }));
+
+    const out = Object.assign(base, {
+      fromName: from ? from.name : 'Choose a start', toName: to ? to.name : 'Choose a destination',
+      fromSub: sub(from, fromNear), toSub: sub(to, toNear),
+      fromAnim: st.fromAnim, toAnim: st.toAnim,
+      pickFrom: () => this.setState({ screen: 'picker', target: 'from', query: '' }),
+      pickTo: () => this.setState({ screen: 'picker', target: 'to', query: '' }),
+      onSwap: () => {
+        this.setState({ fromAnim: 'down', toAnim: 'up' });
+        setTimeout(() => { this._c = null; this.setState((s) => ({ from: s.to, to: s.from, fromAnim: '', toAnim: '' })); }, 170);
+      },
+      onFind: () => { if (!from || !to) return this.say('Pick both ends first'); this.setState({ screen: 'results', expanded: null }); },
+      liveLine: trackedCount ? trackedCount + ' of ' + js.length + ' options tracked live right now' : near.length + ' stops within walking distance',
+      savedChips: [
+        { key: 'h', glyph: '⌂', label: 'Home · Saibaba Colony', pick: () => this.setPlaceByName('Saibaba Colony', 'from') },
+        { key: 'c', glyph: '✦', label: 'College · PSG Tech', pick: () => this.setPlaceByName('PSG College of Technology', 'to') },
+        { key: 'w', glyph: '▤', label: 'Work · Tidel Park', pick: () => this.setPlaceByName('Tidel Park Coimbatore', 'to') },
+      ],
+      recents: [
+        { key: 'r1', i: 0, label: 'Codissia → Marudhamalai Temple', sub: 'Yesterday · 1 change', bus: '70', pick: () => this.setPair('Codissia', 'Marudhamalai') },
+        { key: 'r2', i: 1, label: 'Gandhipuram → Singanallur', sub: 'Mon 8:10 am · direct', bus: '95', pick: () => this.setPair('Gandhipuram', 'Singanallur') },
+        { key: 'r3', i: 2, label: 'Ukkadam → Kumaraguru College', sub: 'Sat 6:40 pm · 1 change', bus: '63', pick: () => this.setPair('Ukkadam', 'Kumaraguru') },
+      ],
+      nearbyMini: near.slice(0, 4).map((n, i) => ({ key: n.key, i, name: n.name, walk: n.walk + ' · ' + n.walkMin, bus: n.routes[0] ? n.routes[0].no : '—', eta: n.nextEta })),
+      nearbyFull: near,
+      locationHint: 'GPS · near Peelamedu, Avinashi Road',
+      query: st.query, onQuery: (e) => this.setState({ query: e.target.value }),
+      pickerPlaceholder: st.target === 'from' ? 'Where are you starting?' : 'Where are you going?',
+      pickerGroupLabel: q ? 'Matches' : 'Stops and landmarks',
+      pickerResults, pickerEmpty: pickerResults.length === 0,
+      useLocation: () => { this._c = null; this.setState(st.target === 'from' ? { from: Object.assign({ id: 'me' }, this.me), screen: 'home' } : { to: Object.assign({ id: 'me' }, this.me), screen: 'home' }); },
+      sortOptions: SORTS.map(([k, label]) => ({ key: k, label, style: this.chipStyle(st.sort === k), pick: () => this.setState({ sort: k, expanded: null }) })),
+      results, noResults: results.length === 0,
+      resultsLive: trackedCount + ' live · ' + (js.length - trackedCount) + ' scheduled · refreshed just now',
+      routeQ: st.routeQ, onRouteQ: (e) => this.setState({ routeQ: e.target.value }),
+      routeList, routeCountLabel: D.allRoutes.length + ' routes published by CCMC · dot = live tracking',
+      statTrips: String(st.savedTrips.length), statSpend: '₹' + (312 + st.savedTrips.length * 18),
+      savedPlaces: [
+        { key: 'h', glyph: '⌂', label: 'Home', place: 'Saibaba Colony', pick: () => this.setPlaceByName('Saibaba Colony', 'from') },
+        { key: 'c', glyph: '✦', label: 'College', place: 'PSG College of Technology', pick: () => this.setPlaceByName('PSG College of Technology', 'to') },
+        { key: 'w', glyph: '▤', label: 'Work', place: 'Tidel Park Coimbatore', pick: () => this.setPlaceByName('Tidel Park Coimbatore', 'to') },
+      ],
+      savedTripList: st.savedTrips.map((t, i) => ({ key: i, label: t.label, sub: t.sub, pick: () => this.go('results') })),
+      noSavedTrips: st.savedTrips.length === 0,
+      fareSlabs: [
+        { key: 1, range: 'Up to 2 km', fare: '₹6', eg: 'Town Hall → Ukkadam' },
+        { key: 2, range: '2 – 5 km', fare: '₹9', eg: 'Gandhipuram → Peelamedu' },
+        { key: 3, range: '5 – 10 km', fare: '₹13', eg: 'Gandhipuram → Singanallur' },
+        { key: 4, range: '10 – 16 km', fare: '₹18', eg: 'Ukkadam → Kalapatti' },
+        { key: 5, range: '16 – 26 km', fare: '₹25', eg: 'Gandhipuram → Annur' },
+        { key: 6, range: 'Over 26 km', fare: '₹32', eg: 'Railway Stn → Kinathukadavu' },
+      ],
+      passes: [
+        { key: 'd', i: 0, kicker: 'Daily', name: 'City day ticket', price: '₹45', body: 'Unlimited ordinary town buses until midnight. Shown as a QR in the app; the conductor scans it.' },
+        { key: 'm', i: 1, kicker: 'Monthly', name: 'Commuter pass', price: '₹900', body: 'Any two corridors, unlimited rides. Worth it above roughly 40 trips a month.' },
+        { key: 's', i: 2, kicker: 'Student', name: 'Concession pass', price: '₹120', body: 'Term-long, for college and school students. Upload your ID once and renew in-app.' },
+      ],
+      fareTripLabel: from && to ? from.name + ' → ' + to.name : 'No trip planned',
+      fareTripSub: results[0] ? results[0].fareLabel + ' total · ' + results[0].changeLabel.toLowerCase() + ' · ' + results[0].timeLabel : 'Plan a trip to see its fare',
+      cityRoads: [], cityStops: [], cityLabels: [], cityBuses: [], meXY: { x: 200, y: 350 },
+      mapLiveBadge: 'Live · ' + D.routes.filter((r) => r.tracked).length + ' buses tracked',
+      mapNearLabel: 'within 2.5 km',
+      mapBusList: [],
+      tripRoads: [], tripRideLines: [], tripWalkLines: [], tripStopDots: [], tripLabels: [],
+      tripPathD: '', hasTripPath: false, originXY: { x: 0, y: 0 }, destTransform: 'translate(0,0)',
+      boardRoads: [], boardWalks: [], boardPins: [], boardOriginXY: { x: 0, y: 0 }, boardCols: [], boardRows: [],
+      tripSteps: [], jStops: [],
+      savedFill: 'none',
+    });
+
+    /* live map */
+    if (st.screen === 'map') {
+      const g = this.cityGeo(412, 700);
+      out.cityRoads = g.roads; out.cityStops = g.stops; out.cityLabels = g.labels; out.cityBuses = g.buses; out.meXY = g.me;
+      out.mapBusList = near.slice(0, 6).map((n, i) => {
+        const rs = D.stopRoutes[n.key] || []; const r = rs.find((x) => x.tracked) || rs[0];
+        if (!r) return null;
+        const e = this.liveEta(D.liveFor(r, n.key, this.seed).eta, r.headway);
+        return {
+          key: n.key + r.no, i, no: r.no, dir: r.from + ' → ' + r.to, at: 'at ' + n.name + ' · ' + n.walk + ' away',
+          eta: (r.tracked && this.liveOn ? '' : '~') + e.label, mode: r.tracked && this.liveOn ? 'live' : 'scheduled',
+          etaStyle: { display: 'block', fontFamily: 'var(--font-heading)', fontSize: 15, fontVariantNumeric: 'tabular-nums', color: r.tracked && this.liveOn ? 'var(--color-accent-200)' : MUTED },
+        };
+      }).filter(Boolean);
+    }
+
+    /* trip + boarding + journey need a selection */
+    const j = st.sel || js[0];
+    if (j) {
+      const rides = j.legs.filter((l) => l.type === 'ride');
+      const first = rides[0];
+      const w0 = j.legs[0];
+      if (st.screen === 'trip') {
+        const g = this.tripGeo(j, 412, 286);
+        out.tripRoads = g.roads; out.tripRideLines = g.rideLines; out.tripWalkLines = g.walkLines;
+        out.tripStopDots = g.dots; out.tripLabels = g.labels; out.tripPathD = g.pathD; out.hasTripPath = !!g.pathD;
+        out.originXY = g.origin; out.destTransform = 'translate(' + g.dest.x.toFixed(1) + ',' + g.dest.y.toFixed(1) + ')';
+      }
+      const eta = this.liveEta(first.live.eta, first.headway);
+      out.tripTime = j.totalMin + ' min';
+      out.tripSub = 'Leave now · arrive ' + this.clock(j.totalMin) + ' · ' + this.dist(j.walkMeters) + ' on foot';
+      out.tripFare = '₹' + j.fare;
+      out.tripFareSub = rides.length > 1 ? rides.length + ' tickets' : 'one ticket';
+      out.tripLiveBadge = j.tracked && this.liveOn ? 'Bus ' + first.bus + ' · ' + eta.label : 'Scheduled every ' + first.headway + ' min';
+      out.boardHeadline = w0 && w0.type === 'walk' && w0.meters > 30
+        ? 'Walk ' + w0.meters + ' m to ' + first.board.name
+        : 'Board at ' + first.board.name;
+      out.boardSub = (w0 && w0.type === 'walk' && w0.meters > 30 ? w0.min + ' min on foot · ' : 'You are already at the stop · ')
+        + (D.stopRoutes[first.board.id] || []).length + ' routes here';
+      out.savedFill = st.savedTrips.some((t) => t.id === j.id) ? 'var(--color-accent)' : 'none';
+      out.onSaveTrip = () => {
+        this.setState((s) => s.savedTrips.some((t) => t.id === j.id) ? s : { savedTrips: s.savedTrips.concat([{ id: j.id, label: j.origin.name + ' → ' + j.dest.name, sub: j.buses.join(' + ') + ' · ' + j.totalMin + ' min' }]) });
+        this.say('Trip saved');
+      };
+      out.onStart = () => { this.startJourney(); };
+      out.tripSteps = this.fullSteps(j);
+
+      /* boarding compare */
+      if (st.screen === 'boarding') {
+        const opts = D.boardingOptions(j.origin, j, this.seed).slice(0, 3);
+        const P = D.project([j.origin].concat(opts.map((o) => o.stop)), 384, 172, 40);
+        const oxy = P(j.origin);
+        out.boardOriginXY = { x: +oxy[0].toFixed(1), y: +oxy[1].toFixed(1) };
+        out.boardRoads = D.roads.map((rd, i) => ({ key: i, points: rd.pts.map((p) => P(p).map((n) => n.toFixed(1)).join(',')).join(' '), style: { fill: 'none', stroke: 'var(--color-neutral-800)', strokeWidth: rd.w * 3, strokeLinecap: 'round' } }));
+        out.boardWalks = opts.map((o, i) => { const a = P(o.stop); return { key: i, x1: +oxy[0].toFixed(1), y1: +oxy[1].toFixed(1), x2: +a[0].toFixed(1), y2: +a[1].toFixed(1) }; });
+        out.boardPins = opts.map((o, i) => { const a = P(o.stop); const px = +a[0].toFixed(1), py = +a[1].toFixed(1); return { key: i, n: String(i + 1), x: px, y: py, numEl: svgText('pn' + i, px, py + 3.5, String(i + 1), 'var(--color-accent-100)', 10, 'middle'), labelEl: svgText('pl' + i, px, py + 22, o.stop.name.replace(' Bus Stand', ''), 'var(--color-neutral-300)', 9, 'middle') }; });
+        const bestOf = (fn, lo) => { const vals = opts.map(fn); return lo ? Math.min.apply(null, vals) : Math.max.apply(null, vals); };
+        const cell = (text, best) => ({
+          key: text + Math.random(), text,
+          style: { flex: 1, minWidth: 0, textAlign: 'center', fontSize: 12, padding: '3px 2px', borderRadius: 'var(--radius-sm)', fontFamily: best ? 'var(--font-heading)' : 'inherit', background: best ? 'var(--color-accent-900)' : 'transparent', color: best ? 'var(--color-accent-200)' : 'inherit' },
+        });
+        const bw = bestOf((o) => o.walkMeters, true);
+        const bt = bestOf((o) => o.totalMin, true);
+        const bx = bestOf((o) => o.transfers, true);
+        const br = bestOf((o) => o.routeCount, false);
+        out.boardCols = opts.map((o, i) => ({ key: i, n: i + 1, name: o.stop.name.replace(' Bus Stand', ''), pick: () => { this.say('Boarding at ' + o.stop.name); this.go('trip'); } }));
+        out.boardRows = [
+          { key: 'walk', label: 'Walk', cells: opts.map((o) => cell(this.dist(o.walkMeters) + ' / ' + o.walkMin + ' min', o.walkMeters === bw)) },
+          { key: 'total', label: 'Door to door', cells: opts.map((o) => cell(o.totalMin + ' min', o.totalMin === bt)) },
+          { key: 'ch', label: 'Changes', cells: opts.map((o) => cell(o.transfers === 0 ? 'Direct' : String(o.transfers), o.transfers === bx)) },
+          { key: 'bus', label: 'Buses', cells: opts.map((o) => cell(o.buses.join(' + ') || '—', false)) },
+          { key: 'rts', label: 'Routes here', cells: opts.map((o) => cell(String(o.routeCount), o.routeCount === br)) },
+          { key: 'sh', label: 'Shelter', cells: opts.map((o) => cell(o.shelter ? 'Yes' : 'Pole only', o.shelter)) },
+          { key: 'lv', label: 'Live data', cells: opts.map((o) => cell(o.live ? 'Tracked' : 'Scheduled', o.live)) },
+        ];
+        out.boardCompareSub = opts.length + ' stops within ' + this.dist(D.meters(this.maxWalk)) + ' of ' + j.origin.name;
+      }
+
+      /* journey */
+      if (st.screen === 'journey') {
+        const list = this.jList();
+        const idx = Math.min(st.jStep, list.length - 1);
+        const cur = list[idx] || {};
+        const remain = list.slice(idx).filter((x) => x.kind === 'stop');
+        const alightIn = remain.findIndex((x) => x.alight);
+        out.jPhase = cur.kind === 'walk' ? 'On foot' : 'On board bus ' + (cur.bus || '');
+        out.jHeadline = cur.kind === 'walk' ? cur.name : 'Next: ' + cur.name;
+        out.jArrive = this.clock(j.totalMin);
+        out.jPlate = first.live.plate;
+        out.jOccupancy = first.live.occupancy;
+        out.jAlertOn = alightIn >= 0 && alightIn <= 2;
+        out.jAlertText = alightIn === 0 ? 'Get off now — ' + (remain[0] ? remain[0].name : '') : 'Get off in ' + alightIn + ' stop' + (alightIn > 1 ? 's' : '') + ' — press the bell';
+        out.jNextLabel = idx >= list.length - 1 ? 'Finish journey' : 'Next stop';
+        out.onNextStop = () => { if (st.jStep >= list.length - 1) { clearInterval(this.jt); this.say('You have arrived'); this.go('home', { tab: 'plan' }); } else this.setState((s) => ({ jStep: s.jStep + 1 })); };
+        out.onPrevStop = () => this.setState((s) => ({ jStep: Math.max(0, s.jStep - 1) }));
+        out.onEndJourney = () => { clearInterval(this.jt); this.go('trip'); };
+        out.jStops = list.map((s, i) => {
+          const past = i < idx, now = i === idx;
+          return {
+            key: i, name: s.name, sub: s.sub,
+            right: now ? 'now' : (past ? '' : (s.kind === 'stop' ? '' : '')),
+            nameStyle: { fontSize: now ? 15 : 13.5, fontFamily: now ? 'var(--font-heading)' : 'inherit', color: past ? 'var(--color-neutral-600)' : (now ? 'var(--color-accent-200)' : 'var(--color-text)'), lineHeight: 1.3 },
+            dotStyle: now
+              ? { width: 13, height: 13, borderRadius: '50%', flex: 'none', marginTop: 3, background: 'var(--color-accent)', boxShadow: '0 0 0 4px color-mix(in srgb, var(--color-accent) 25%, transparent)', animation: 'kGlow 1.4s ease-in-out infinite' }
+              : { width: 9, height: 9, borderRadius: '50%', flex: 'none', marginTop: 5, background: past ? 'var(--color-neutral-700)' : 'transparent', border: past ? 'none' : '2px solid var(--color-neutral-600)' },
+            railStyle: { flex: 1, width: 0, borderLeft: '2px ' + (s.kind === 'stop' ? 'solid' : 'dotted') + ' ' + (past ? 'var(--color-neutral-800)' : 'var(--color-accent-700)'), display: i === list.length - 1 ? 'none' : 'block', margin: '3px 0' },
+          };
+        });
+      }
+    }
+    return out;
+  }
+
+  fullSteps(j) {
+    const D = this.D;
+    const steps = [];
+    const wrap = (accent) => ({
+      width: 26, height: 26, flex: 'none', borderRadius: '50%', display: 'inline-flex',
+      alignItems: 'center', justifyContent: 'center',
+      background: accent ? 'var(--color-accent-800)' : 'var(--color-neutral-900)',
+      color: accent ? 'var(--color-accent-100)' : 'var(--color-neutral-400)',
+      border: '1px solid ' + (accent ? 'var(--color-accent-700)' : 'var(--color-divider)'),
+    });
+    const rail = (solid, last) => ({ flex: 1, width: 0, borderLeft: '2px ' + (solid ? 'solid var(--color-accent-700)' : 'dotted var(--color-neutral-700)'), display: last ? 'none' : 'block', margin: '4px 0' });
+    j.legs.forEach((l, k) => {
+      const last = k === j.legs.length - 1;
+      if (l.type === 'walk') {
+        const toDest = last;
+        steps.push({
+          key: k, i: Math.min(k, 7), icon: ICON.walk, iconWrapStyle: wrap(false), railStyle: rail(false, last),
+          title: l.atTransfer ? 'Change buses — walk ' + l.meters + ' m' : (toDest ? 'Walk ' + l.meters + ' m to ' + j.dest.name : 'Walk ' + l.meters + ' m to ' + l.to.name),
+          sub: l.atTransfer ? l.from.name + ' → ' + l.to.name : (toDest ? 'From ' + l.from.name : 'From ' + (j.origin.name || 'your location')),
+          meta: l.min + ' min on foot' + (l.meters > 700 ? ' · long walk' : ''),
+        });
+      } else {
+        const prev = j.legs[k - 1];
+        if (prev && prev.type === 'ride') {
+          steps.push({
+            key: 'x' + k, i: Math.min(k, 7), icon: ICON.swapv, iconWrapStyle: wrap(false), railStyle: rail(false, false),
+            title: 'Change at ' + l.board.name,
+            sub: 'Get off bus ' + prev.bus + ', board bus ' + l.bus + ' at the same stand',
+            meta: 'No walking · wait about ' + Math.round(l.headway / 2) + ' min',
+          });
+        }
+        const e = this.liveEta(l.live.eta, l.headway);
+        steps.push({
+          key: k, i: Math.min(k, 7), icon: ICON.bus, iconWrapStyle: wrap(true), railStyle: rail(true, last),
+          title: 'Bus ' + l.bus + ' towards ' + l.route.to,
+          sub: l.board.name + ' → ' + l.alight.name + (this.showTamil && l.alight.ta ? ' (' + l.alight.ta + ')' : ''),
+          meta: (l.live.tracked && this.liveOn ? 'Live · arrives in ' + e.label + ' · ' : 'Every ' + l.headway + ' min · ')
+            + l.nStops + ' stops · ' + l.min + ' min · ₹' + l.fare + ' · ' + l.live.occupancy,
+        });
+      }
+    });
+    steps.push({
+      key: 'end', i: Math.min(j.legs.length, 7), icon: ICON.flag, iconWrapStyle: wrap(true), railStyle: rail(true, true),
+      title: 'Arrive at ' + j.dest.name, sub: this.clock(j.totalMin), meta: '₹' + j.fare + ' total · ' + this.dist(j.walkMeters) + ' walked',
+    });
+    return steps;
+  }
+
+  startJourney() {
+    clearInterval(this.jt);
+    this.setState({ screen: 'journey', jStep: 0 });
+    const len = this.jList().length;
+    this.jt = setInterval(() => {
+      this.setState((s) => (s.screen !== 'journey' || s.jStep >= len - 1) ? s : { jStep: s.jStep + 1 });
+    }, 3600);
+  }
+
+  setPlaceByName(name, slot) {
+    const p = this.D.searchIndex.find((x) => x.name === name) || this.D.searchIndex.find((x) => x.name.indexOf(name) === 0);
+    if (!p) return;
+    this._c = null;
+    this.setState(slot === 'from' ? { from: p, screen: 'home', tab: 'plan' } : { to: p, screen: 'home', tab: 'plan' });
+  }
+  setPair(a, b) {
+    const f = this.D.searchIndex.find((x) => x.name.indexOf(a) === 0);
+    const t = this.D.searchIndex.find((x) => x.name.indexOf(b) === 0);
+    this._c = null;
+    this.setState({ from: f || this.state.from, to: t || this.state.to, screen: 'results', expanded: null });
+  }
+}
+</script>
+</body>
+</html>
