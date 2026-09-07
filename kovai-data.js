@@ -1,3 +1,20 @@
+Coimbatore Bus Route App
+
+Same commit hash (6bcd9e2c9e7a) — nothing new landed. The upload isn't reaching GitHub, even though the app shows you committing.
+
+Let's skip Upload entirely and paste directly instead — that's more reliable on mobile:
+
+Open https://github.com/VashanthkumarPG/Kovai-bus/edit/main/kovai-data.js (this opens the file straight in edit mode)
+Select all the existing text and delete it
+I'll paste the replacement content in my next message — copy all of it in and tap Commit changes at the bottom
+Confirm you can get to that edit screen and I'll send the content.
+
+yes
+Your other tab is working on a request. Try again once it finishes.
+Your other tab is working on a request. Try again once it finishes.
+Share the js again
+Paste this whole thing into the GitHub edit box for kovai-data.js (replacing everything), then Commit changes:
+
 /* Kovai Bus — network data + journey planner.
    Route numbers and endpoints are from CCMC's published town-bus list.
    Intermediate stop sequences are corridor-plausible reconstructions. */
@@ -103,12 +120,10 @@
     ['Amrita Hospital Ettimadai', 'அமிர்தா', 10.902, 76.902, 'hospital'],
   ].map(([name, ta, lat, lng, kind]) => ({ id: 'p_' + name.toLowerCase().replace(/[^a-z]+/g, '_'), name, ta, lat, lng, kind, place: true }));
 
-  /* Searchable index: every stop is also a place you can pick. */
   const searchIndex = stops
     .map((s) => ({ id: s.id, name: s.name, ta: s.ta, lat: s.lat, lng: s.lng, kind: 'stop', isStop: true }))
     .concat(places);
 
-  /* ── Routes: real CCMC numbers on plausible corridors ───────────────── */
   const R = (no, from, to, ids, headway, tracked) => ({ no, from, to, ids, headway, tracked });
   const routes = [
     R('1', 'Maruthamalai', 'Avarampalayam', ['maruthamalai', 'vadavalli', 'edayarpalayam', 'telungupalayam', 'sivananda', 'gandhipuram', 'avarampalayam'], 14, true),
@@ -162,7 +177,6 @@
   const stopRoutes = {};
   routes.forEach((r) => r.ids.forEach((id) => { (stopRoutes[id] = stopRoutes[id] || []).push(r); }));
 
-  /* ── Geometry ───────────────────────────────────────────────────────── */
   const RAD = Math.PI / 180;
   function km(a, b) {
     const dLat = (b.lat - a.lat) * RAD;
@@ -200,7 +214,6 @@
     return { km: d, min: Math.round(d * RIDE_MIN_PER_KM + (j - i) * DWELL) };
   }
 
-  /* deterministic jitter so "live" values are stable per bus per minute */
   function hash(str) { let h = 2166136261; for (let i = 0; i < str.length; i++) { h ^= str.charCodeAt(i); h = Math.imul(h, 16777619); } return (h >>> 0) / 4294967295; }
 
   function liveFor(r, boardStop, minuteSeed) {
@@ -267,7 +280,6 @@
       seen.add(j.id); out.push(j);
     };
 
-    // direct
     ocs.forEach((oc) => {
       (stopRoutes[oc.stop.id] || []).forEach((r) => {
         const i = r.ids.indexOf(oc.stop.id);
@@ -280,7 +292,6 @@
       });
     });
 
-    // one transfer
     ocs.slice(0, 4).forEach((oc) => {
       (stopRoutes[oc.stop.id] || []).forEach((r1) => {
         const i = r1.ids.indexOf(oc.stop.id);
@@ -300,7 +311,6 @@
       });
     });
 
-    // two transfers, only if the network is thin here
     if (out.length < 2) {
       ocs.slice(0, 3).forEach((oc) => {
         (stopRoutes[oc.stop.id] || []).forEach((r1) => {
@@ -328,7 +338,6 @@
     }
 
     out.sort((a, b) => a.totalMin - b.totalMin);
-    // keep a diverse shortlist: best per bus-signature, cap 6
     const bySig = new Map();
     out.forEach((j) => { const s = j.buses.join('-'); if (!bySig.has(s)) bySig.set(s, j); });
     return Array.from(bySig.values()).slice(0, 6);
@@ -341,7 +350,6 @@
     'Leaving soonest': (a, b) => a.departIn - b.departIn || a.totalMin - b.totalMin,
   };
 
-  /* Alternative boarding stops for a journey's first ride */
   function boardingOptions(origin, journey, minuteSeed) {
     const dest = journey.dest;
     const cands = nearStops(origin, 1.9, 4);
@@ -359,7 +367,6 @@
     }).filter((o) => o.totalMin != null);
   }
 
-  /* ── Map projection + schematic roads ───────────────────────────────── */
   function project(pts, w, h, pad) {
     pad = pad == null ? 24 : pad;
     const n = Math.max.apply(null, pts.map((p) => p.lat));
@@ -388,7 +395,6 @@
     ['Vellalore Road', ['sowripalayam', 'vellalore', 'kurichi'], 1.4],
   ].map(([name, ids, w]) => ({ name, w, pts: ids.filter((i) => byId[i]).map((i) => byId[i]) }));
 
-  /* ── Full published CCMC list, for the route browser ────────────────── */
   const allRoutes = `1|Maruthamalai|Avarampalayam
 1A,1C|Ondipudur|Vadavalli
 1D,1E|Ondipudur|Maruthamalai
