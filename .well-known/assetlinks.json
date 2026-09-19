@@ -1,0 +1,8 @@
+[{
+  "relation": ["delegate_permission/common.handle_all_urls"],
+  "target": {
+    "namespace": "android_app",
+    "package_name": "io.github.vashanthkumarpg.twa",
+    "sha256_cert_fingerprints": ["43:70:1F:6C:13:F2:84:47:63:D8:CE:9E:E1:91:F1:61:7E:15:E4:D0:7A:B5:82:10:29:F7:CD:A6:53:CD:29:C2"]
+  }
+}]
