@@ -1,20 +1,3 @@
-Coimbatore Bus Route App
-
-Same commit hash (6bcd9e2c9e7a) — nothing new landed. The upload isn't reaching GitHub, even though the app shows you committing.
-
-Let's skip Upload entirely and paste directly instead — that's more reliable on mobile:
-
-Open https://github.com/VashanthkumarPG/Kovai-bus/edit/main/kovai-data.js (this opens the file straight in edit mode)
-Select all the existing text and delete it
-I'll paste the replacement content in my next message — copy all of it in and tap Commit changes at the bottom
-Confirm you can get to that edit screen and I'll send the content.
-
-yes
-Your other tab is working on a request. Try again once it finishes.
-Your other tab is working on a request. Try again once it finishes.
-Share the js again
-Paste this whole thing into the GitHub edit box for kovai-data.js (replacing everything), then Commit changes:
-
 /* Kovai Bus — network data + journey planner.
    Route numbers and endpoints are from CCMC's published town-bus list.
    Intermediate stop sequences are corridor-plausible reconstructions. */
